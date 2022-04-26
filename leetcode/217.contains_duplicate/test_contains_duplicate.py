@@ -1,5 +1,5 @@
 import pytest
-from contains_duplicate import contains_duplicate
+from contains_duplicate import has_duplicate
 
 
 @pytest.mark.parametrize(
@@ -11,4 +11,4 @@ from contains_duplicate import contains_duplicate
     ],
 )
 def test_contains_duplicate(nums, expected):
-    assert expected == contains_duplicate(nums)
+    assert expected == has_duplicate(nums)
