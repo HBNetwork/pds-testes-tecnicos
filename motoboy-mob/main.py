@@ -1,4 +1,5 @@
-from collections import namedtuple, deque
+from collections import namedtuple, deque, defaultdict
+from itertools import chain
 
 import pytest
 
@@ -17,37 +18,35 @@ class Motoboy(namedtuple("Motoboy", "name price exclusive")):
 Pedido = namedtuple("Pedido", "store amount commission")
 
 
+ANY_STORE = ""
+
+
 class Cycle:
     def __init__(self, motoboys):
         self.motoboys = motoboys
-        self.queue = deque()
+        self.priorities = {}
 
-    def ensure_queue(self):
-        if not self.queue:
-            self.queue = deque(self.motoboys)
+    @staticmethod
+    def prioritize(motoboys):
+        priorities = defaultdict(deque)
+        for m in motoboys:
+            priorities[m.exclusive].append(m)
+        return priorities
 
-    def prioritize(self, store):
-        priorities = set()
+    def is_empty(self):
+        return len(self.priorities.get(ANY_STORE, ())) == 0
 
-        for m in self.queue:
-            if m.exclusive == store:
-                priorities.add(m)
-
-        for m in priorities:
-            self.queue.remove(m)
-            self.queue.appendleft(m)
-
+    def has_exclusive(self, store):
+        return self.priorities.get(store, False)
 
     def next(self, store):
-        self.ensure_queue()
-        self.prioritize(store)
+        if self.is_empty():
+            self.priorities = self.prioritize(self.motoboys)
 
-        while True:
-            self.ensure_queue()
+        if self.has_exclusive(store):
+            return self.priorities[store].popleft()
 
-            m = self.queue.popleft()
-            if m.can_deliver(store):
-                return m
+        return self.priorities[ANY_STORE].popleft()
 
 
 def earnings(m, p):
@@ -67,7 +66,7 @@ def delivery(motoboys, pedidos):
 
 
 def test_1_motoboy_loja1_com_1_pedido():
-    assert delivery([Motoboy("M1", 2, [])], [Pedido("L1", 50, 0.05)]) == [
+    assert delivery([Motoboy("M1", 2, ANY_STORE)], [Pedido("L1", 50, 0.05)]) == [
         ("M1", "L1", 4.5),
     ]
 
@@ -78,7 +77,7 @@ def test_1_motoboy_loja1_com_3_pedidos():
         Pedido("L1", 50, 0.05),
         Pedido("L1", 50, 0.05),
     ]
-    assert delivery([Motoboy("M1", 2, [])], pedidos) == [
+    assert delivery([Motoboy("M1", 2, ANY_STORE)], pedidos) == [
         ("M1", "L1", 4.5),
         ("M1", "L1", 4.5),
         ("M1", "L1", 4.5),
@@ -93,8 +92,8 @@ def test_2_motoboys_loja1_com_3_pedidos():
     ]
 
     motoboys = [
-        Motoboy("M1", 2, []),
-        Motoboy("M2", 3, [])
+        Motoboy("M1", 2, ANY_STORE),
+        Motoboy("M2", 3, ANY_STORE)
     ]
 
     assert delivery(motoboys, pedidos) == [
@@ -119,11 +118,11 @@ def test_5_motoboys_3_lojas_com_10_pedidos():
     ]
 
     motoboys = [
-        Motoboy("M1", 2, ""),
-        Motoboy("M2", 2, ""),
-        Motoboy("M3", 2, ""),
+        Motoboy("M1", 2, ANY_STORE),
+        Motoboy("M2", 2, ANY_STORE),
+        Motoboy("M3", 2, ANY_STORE),
         Motoboy("M4", 2, "L1"),
-        Motoboy("M5", 3, ""),
+        Motoboy("M5", 3, ANY_STORE),
     ]
 
     assert delivery(motoboys, pedidos) == [
@@ -142,11 +141,11 @@ def test_5_motoboys_3_lojas_com_10_pedidos():
 
 def test_cycle():
     motoboys = [
-        Motoboy("M1", 2, ""),
-        Motoboy("M2", 2, ""),
-        Motoboy("M3", 2, ""),
+        Motoboy("M1", 2, ANY_STORE),
+        Motoboy("M2", 2, ANY_STORE),
+        Motoboy("M3", 2, ANY_STORE),
         Motoboy("M4", 2, "L1"),
-        Motoboy("M5", 3, ""),
+        Motoboy("M5", 3, ANY_STORE),
     ]
 
     c = Cycle(motoboys)
@@ -165,17 +164,17 @@ def test_cycle():
 
 def test_cycle_2():
     motoboys = [
-        Motoboy("M1", 2, ""),
-        Motoboy("M2", 2, ""),
-        Motoboy("M3", 2, ""),
+        Motoboy("M1", 2, ANY_STORE),
+        Motoboy("M2", 2, ANY_STORE),
+        Motoboy("M3", 2, ANY_STORE),
         Motoboy("M4", 2, "L1"),
         Motoboy("M5", 3, "L1"),
     ]
 
     c = Cycle(motoboys)
 
-    assert c.next("L1").name == "M5"
     assert c.next("L1").name == "M4"
+    assert c.next("L1").name == "M5"
     assert c.next("L1").name == "M1"
     assert c.next("L2").name == "M2"
     assert c.next("L2").name == "M3"
@@ -184,6 +183,7 @@ def test_cycle_2():
     assert c.next("L3").name == "M3"
     assert c.next("L3").name == "M1"
     assert c.next("L3").name == "M2"
+
 
 if __name__ == "__main__":
     pytest.main(["-s", __file__])
