@@ -28,7 +28,7 @@ pedidos = [{'loja': Loja_1,'valor':50,'pedido':'PEDIDO1'},{'loja': Loja_2,'valor
 
 #Respostas
 
-Manage(lista_motoboy,pedidos).respostas()
+print(Manage(lista_motoboy, pedidos).respostas())
 
 
 

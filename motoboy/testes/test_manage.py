@@ -23,7 +23,7 @@ def test_init():
 
     manage = Manage(lista_motoboy, pedidos)
 
-    assert len(manage.lista_motoboy) == 2
+    assert len(manage.motoboys) == 2
     assert len(manage.pedidos) == 3
 
 def test_criando_pedido():

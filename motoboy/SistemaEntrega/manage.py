@@ -15,7 +15,7 @@ class Manage:
          lista_motoboy = Lista de todos os motoboys criado pela Classe Motoboy
          pedidos = Lista de dicionário com os pedidos das lojas
         """
-        self.lista_motoboy = lista_motoboy
+        self.motoboys = lista_motoboy
         self.pedidos = pedidos
 
     def respostas(self):
@@ -28,18 +28,37 @@ class Manage:
          Após o método criando_pedido finalizar. O método resposta por um loop for acessa todos os motoboys e retorna por uma lista de dicionário,
          quem é o motoboy, quantodos pedidos ele tem, de quais lojas e quanto ele tem de comissão prevista no dia.
         """
-        [self.criando_pedido(self.pedidos[x]['loja'], self.pedidos[x]['valor']) for x in range(len(self.pedidos))]
-        self.respostas = dict()
-        self.lista_resposta = []
+        # [self.criando_pedido(self.pedidos[x]['loja'], self.pedidos[x]['valor']) for x in range(len(self.pedidos))]
 
-        for i in self.lista_motoboy:
-            self.respostas['motoboy'] = i.nome
-            self.respostas['Pedidos'] = i.quantidade_entregas_ativas()
-            self.respostas['De qual loja é'] = i.vizualizar_loja_entrega()
-            self.respostas['Comissão'] = self.calculando_comissão(i)
-            self.lista_resposta.append(self.respostas.copy())
+        # for x in range(len(self.pedidos)):
+        #     self.criando_pedido(self.pedidos[x]['loja'], self.pedidos[x]['valor'])
 
-        print(self.lista_resposta)
+        # self.respostas = dict()
+        # self.lista_resposta = []
+        #
+        # for i in self.lista_motoboy:
+        #     self.respostas['motoboy'] = i.nome
+        #     self.respostas['Pedidos'] = i.quantidade_entregas_ativas()
+        #     self.respostas['De qual loja é'] = i.vizualizar_loja_entrega()
+        #     self.respostas['Comissão'] = self.calculando_comissão(i)
+        #     self.lista_resposta.append(self.respostas.copy())
+        #
+        # print(self.lista_resposta)
+
+        for p in self.pedidos:
+            self.criando_pedido(p['loja'], p['valor'])
+
+        l = []
+
+        for m in self.motoboys:
+            l.append({
+                'motoboy': m.nome,
+                'Pedidos': m.quantidade_entregas_ativas(),
+                'De qual loja é': m.vizualizar_loja_entrega(),
+                'Comissão': self.calculando_comissão(m),
+            })
+
+        return l
 
     def criando_pedido(self, loja, valor):
         """
@@ -87,8 +106,8 @@ class Manage:
         id = inteiro
         """
 
-        lista_encontra_motoboy_prioridade = [self.lista_motoboy[i] for i in range(len(self.lista_motoboy)) if
-                                             loja.retornar_nome() in self.lista_motoboy[i].vizualizar_prioridade()]
+        lista_encontra_motoboy_prioridade = [m for m in self.motoboys
+                                             if loja.retornar_nome() in m.vizualizar_prioridade()]
 
         if len(lista_encontra_motoboy_prioridade) == 0:
             return False
@@ -130,18 +149,18 @@ class Manage:
         id = inteiro
         """
 
-        a = sorted([[self.lista_motoboy[i],(loja.enviando_pedido(id)[0]*loja.enviando_pedido(id)[2])+self.lista_motoboy[i].taxa,
-                     self.lista_motoboy[i].quantidade_entregas_ativas()] for i in
-                 range(len(self.lista_motoboy))],key=lambda x: x[-1])
+        a = sorted([[self.motoboys[i], (loja.enviando_pedido(id)[0] * loja.enviando_pedido(id)[2]) + self.motoboys[i].taxa,
+                     self.motoboys[i].quantidade_entregas_ativas()] for i in
+                    range(len(self.motoboys))], key=lambda x: x[-1])
 
 
-        if a[0][1] <= sum([x[1] for x in a]) / len(self.lista_motoboy):
+        if a[0][1] <= sum([x[1] for x in a]) / len(self.motoboys):
             b = a[0][0]
 
         elif a[0][1] <= a[1][1]:
             b = a[0][0]
 
-        elif a[0][1] > a[1][1] and a[0][2] < sum([x[2] for x in a]) / len(self.lista_motoboy):
+        elif a[0][1] > a[1][1] and a[0][2] < sum([x[2] for x in a]) / len(self.motoboys):
             b = a[0][0]
 
         else:
