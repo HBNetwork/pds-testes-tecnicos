@@ -1,3 +1,9 @@
+"""
+Write a function that determines if all alpha characters in a string 
+  are surrounded (the characters immediately before and after) by a plus sign.
+Function should return false if any alpha character present in the string isn't
+  surrounded by a plus sign. Otherwise the function should return true.
+"""
 def symbols(input_str: str) -> bool:
   plus = False
   foundalpha = False
