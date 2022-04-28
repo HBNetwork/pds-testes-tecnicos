@@ -33,6 +33,7 @@ def symbols(input_str: str) -> bool:
             if len(input_str) < 3:
                 return False
             
+            # Check the set of alphas start with plus
             if not input_str[idx - 1] == "+":
                 return False
 
@@ -41,7 +42,9 @@ def symbols(input_str: str) -> bool:
             if idx >= len(input_str):
                 return False
 
+            # Verify with a set of alphas are surround by plus
             while idx < len(input_str):
+                # Check the set of alphas end with plus
                 if input_str[idx] == "+":
                     break
 
