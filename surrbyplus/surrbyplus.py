@@ -5,22 +5,32 @@ Function should return false if any alpha character present in the string isn't
   surrounded by a plus sign. Otherwise the function should return true.
 """
 def symbols(input_str: str) -> bool:
-  plus = False
-  foundalpha = False
-  validInput = True
-  for i, l in enumerate(input_str):
-    if l == '+':
-      if plus and foundalpha:
-         foundalpha = False
-         validInput = True
-      plus = True
-    elif l.isalpha():
-      validInput = False
-      foundalpha = True
-    elif l != '+' and foundalpha:
-      return False
+  onValidation = False
+
+  if len(input_str) < 3:
+    for l in input_str:
+      if l.isalpha():
+        return False
+    return True
    
-  return validInput
+  for i, l in enumerate(input_str):
+    if onValidation:
+      if l.isalpha():
+        continue
+      elif l == '+':
+        onValidation = False
+        continue
+      return False
+
+    if l.isalpha():
+      if i == len(input_str) - 1:
+        return False
+      elif input_str[i - 1] == '+':
+        onValidation = True
+      else:
+        return False
+
+  return True
 
  
 def main():
