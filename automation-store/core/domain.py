@@ -1,6 +1,6 @@
 # shoes, pants, shirts
 
-class Shirts:
+class Shirt:
     def __init__(self) -> None:
         self.size
         self.color
