@@ -1,5 +1,4 @@
 from collections import namedtuple, deque, defaultdict
-from itertools import chain
 
 import pytest
 
