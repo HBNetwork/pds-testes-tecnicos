@@ -20,7 +20,7 @@ def symbols(input_str: str) -> bool:
     #                     return True
     #                 idx += idx2 + 1
     #                 break
-                
+
     #             if l.isalpha():
     #                 if idx2 == len(input_str[idx + 1 :]) - 1:
     #                     return False
@@ -29,10 +29,10 @@ def symbols(input_str: str) -> bool:
     idx = 0
 
     while idx < len(input_str):
-        if input_str[idx].isalpha() :
+        if input_str[idx].isalpha():
             if len(input_str) < 3:
                 return False
-            
+
             # Check the set of alphas start with plus
             if not input_str[idx - 1] == "+":
                 return False
@@ -58,8 +58,9 @@ def symbols(input_str: str) -> bool:
 
     return True
 
+
 def main():
-    
+
     assert symbols("") is True
     assert symbols("0") is True
     assert symbols("123") is True
