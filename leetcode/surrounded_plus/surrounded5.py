@@ -6,39 +6,40 @@ Function should return false if any alpha input_str[idx]acter present in the str
 surrounded by a plus sign. Otherwise the function should return true.
 """
 
+NORMAL, PLUS, ALPHA, ERROR = 0, 1, 2, 3
 
-def symbols(input_str: str) -> bool:
-    idx = 0
+is_plus = lambda char: char == "+"
+not_plus = lambda char: char != "+"
+not_alpha = lambda char: not char.isalpha()
+is_alpha = lambda char: char.isalpha()
 
-    while idx < len(input_str):
-        if input_str[idx].isalpha():
-            if len(input_str) < 3:
-                return False
+FSM = {
+    NORMAL: (
+        (is_plus, PLUS),
+        (is_alpha, ERROR),
+    ),
+    PLUS: (
+        (is_alpha, ALPHA),
+        (not_plus, NORMAL),
+    ),
+    ALPHA: (
+        (is_plus, PLUS),
+        (not_alpha, ERROR),
+    ),
+    ERROR: (),
+}
 
-            # Check the set of alphas start with plus
-            if not input_str[idx - 1] == "+":
-                return False
 
-            idx += 1
+def symbols(s: str) -> bool:
+    state = NORMAL
 
-            if idx >= len(input_str):
-                return False
+    for char in s:
+        for condition, new_state in FSM.get(state):
+            if condition(char):
+                state = new_state
+                continue
 
-            # Verify with a set of alphas are surround by plus
-            while idx < len(input_str):
-                # Check the set of alphas end with plus
-                if input_str[idx] == "+":
-                    break
-
-                if input_str[idx].isalpha():
-                    idx += 1
-                    continue
-
-                return False
-
-        idx += 1
-
-    return True
+    return state not in (ALPHA, ERROR)
 
 
 def test_main():
@@ -51,7 +52,7 @@ def test_main():
     assert symbols("+ab+") is True
     assert symbols("+ab++") is True
     assert symbols("+Z+Y+") is True
-    assert symbols("+ab+a+") is True
+    assert symbols("123+1+ab+a+") is True
     assert symbols("+a+b+7") is True
     assert symbols("+a+=5=+d+") is True
     assert symbols("12+ab+a+12") is True

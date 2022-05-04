@@ -6,39 +6,48 @@ Function should return false if any alpha input_str[idx]acter present in the str
 surrounded by a plus sign. Otherwise the function should return true.
 """
 
+NORMAL, PLUS, ALPHA, ERROR = 0, 1, 2, 3
 
-def symbols(input_str: str) -> bool:
-    idx = 0
 
-    while idx < len(input_str):
-        if input_str[idx].isalpha():
-            if len(input_str) < 3:
-                return False
+# NORMAL, TESTE, PLUS
+# NORMAL, TESTE, NORMAL
+# NORMAL, TESTE, RAISE
+# PLUS, TESTE, PLUS
+# PLUS, TESTE, ALPHA
+# PLUS, TESTE, NORMAL
+# ALPHA, TESTE, PLUS
+# ALPHA, TESTE, ALPHA
+# ALPHA, TESTE, RAISE
 
-            # Check the set of alphas start with plus
-            if not input_str[idx - 1] == "+":
-                return False
+def symbols(s: str) -> bool:
+    state = NORMAL
 
-            idx += 1
+    for char in s:
+        if state == NORMAL:
+            if char == "+":
+                state = PLUS
+            elif not char.isalpha():
+                continue
+            else:
+                state = ERROR
+        elif state == PLUS:
+            if char == "+":
+                continue
+            elif char.isalpha():
+                state = ALPHA
+            else:
+                state = NORMAL
+        elif state == ALPHA:
+            if char == "+":
+                state = PLUS
+            elif char.isalpha():
+                continue
+            else:
+                state = ERROR
+        elif state == "ERROR":
+            break
 
-            if idx >= len(input_str):
-                return False
-
-            # Verify with a set of alphas are surround by plus
-            while idx < len(input_str):
-                # Check the set of alphas end with plus
-                if input_str[idx] == "+":
-                    break
-
-                if input_str[idx].isalpha():
-                    idx += 1
-                    continue
-
-                return False
-
-        idx += 1
-
-    return True
+    return state not in (ALPHA, ERROR)
 
 
 def test_main():
@@ -51,7 +60,7 @@ def test_main():
     assert symbols("+ab+") is True
     assert symbols("+ab++") is True
     assert symbols("+Z+Y+") is True
-    assert symbols("+ab+a+") is True
+    assert symbols("123+1+ab+a+") is True
     assert symbols("+a+b+7") is True
     assert symbols("+a+=5=+d+") is True
     assert symbols("12+ab+a+12") is True

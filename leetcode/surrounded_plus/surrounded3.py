@@ -6,37 +6,37 @@ Function should return false if any alpha input_str[idx]acter present in the str
 surrounded by a plus sign. Otherwise the function should return true.
 """
 
+ZERO, ONE, TWO = 0, 1, 2
 
-def symbols(input_str: str) -> bool:
-    idx = 0
 
-    while idx < len(input_str):
-        if input_str[idx].isalpha():
-            if len(input_str) < 3:
+def symbols(s: str) -> bool:
+    state = ZERO
+
+    for char in s:
+        if state == ZERO:
+            if char == "+":
+                state = ONE
+            elif not char.isalpha():
+                continue
+            else:
+                return False
+        elif state == ONE:
+            if char == "+":
+                continue
+            elif char.isalpha():
+                state = TWO
+            else:
+                state = ZERO
+        elif state == TWO:
+            if char == "+":
+                state = ONE
+            elif char.isalpha():
+                continue
+            else:
                 return False
 
-            # Check the set of alphas start with plus
-            if not input_str[idx - 1] == "+":
-                return False
-
-            idx += 1
-
-            if idx >= len(input_str):
-                return False
-
-            # Verify with a set of alphas are surround by plus
-            while idx < len(input_str):
-                # Check the set of alphas end with plus
-                if input_str[idx] == "+":
-                    break
-
-                if input_str[idx].isalpha():
-                    idx += 1
-                    continue
-
-                return False
-
-        idx += 1
+    if state == TWO:
+        return False
 
     return True
 
@@ -51,7 +51,7 @@ def test_main():
     assert symbols("+ab+") is True
     assert symbols("+ab++") is True
     assert symbols("+Z+Y+") is True
-    assert symbols("+ab+a+") is True
+    assert symbols("123+1+ab+a+") is True
     assert symbols("+a+b+7") is True
     assert symbols("+a+=5=+d+") is True
     assert symbols("12+ab+a+12") is True
