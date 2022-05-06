@@ -1,3 +1,4 @@
+import json
 from django.urls import reverse
 
 
@@ -122,3 +123,155 @@ def test_retrive_shirt_checking_expected_fields(client):
     data = response.json()
 
     assert data == expected_field
+
+
+def test_update_shirt(client):
+    data = {
+        "size": "G",
+        "color": "Yellow",
+        "brand": "ZaraMF",
+        "price": 110,
+    }
+
+    data_expected = {
+        "id": 1,
+        "size": "G",
+        "color": "Yellow",
+        "brand": "ZaraMF",
+        "price": 110.0,
+        "slug": "ZaraMFG",
+    }
+
+    url = reverse("shirt-detail", kwargs={"pk": 1})
+    response = client.put(
+        url,
+        data=json.dumps(data),
+        content_type="application/json",
+    )
+    response_data = response.json()
+
+    assert response.status_code == 200
+    assert data_expected == response_data
+
+
+def test_update_shirt_with_id_not_found(client):
+    data = {
+        "size": "G",
+        "color": "Yellow",
+        "brand": "ZaraMF",
+        "price": 110,
+    }
+    data_expected = {"message": "Resource not found."}
+
+    url = reverse("shirt-detail", kwargs={"pk": 10})
+    response = client.put(
+        url,
+        data=json.dumps(data),
+        content_type="application/json",
+    )
+    response_data = response.json()
+
+    assert response.status_code == 404
+    assert data_expected == response_data
+
+
+def test_update_shirt_with_invalid_price(client):
+    data = {
+        "size": "G",
+        "color": "Yellow",
+        "brand": "ZaraMF",
+        "price": "ABC",
+    }
+
+    data_expected = {"price": ["A valid number is required."]}
+
+    url = reverse("shirt-detail", kwargs={"pk": 1})
+    response = client.put(
+        url,
+        data=json.dumps(data),
+        content_type="application/json",
+    )
+
+    response_data = response.json()
+
+    assert response.status_code == 400
+    assert data_expected == response_data
+
+
+def test_partial_update_shirt(client):
+    data = {
+        "size": "G",
+        "price": 195,
+    }
+
+    data_expected = {
+        "id": 1,
+        "size": "G",
+        "color": "Yellow",
+        "brand": "ZaraMF",
+        "price": 195.0,
+        "slug": "ZaraMFG",
+    }
+
+    url = reverse("shirt-detail", kwargs={"pk": 1})
+    response = client.put(
+        url,
+        data=json.dumps(data),
+        content_type="application/json",
+    )
+
+    response_data = response.json()
+
+    assert response.status_code == 200
+    assert data_expected == response_data
+
+
+def test_partial_update_shirt_with_invalid_price(client):
+    data = {
+        "size": "G",
+        "price": "ABC",
+    }
+
+    data_expected = {"price": ["A valid number is required."]}
+
+    url = reverse("shirt-detail", kwargs={"pk": 1})
+    response = client.put(
+        url,
+        data=json.dumps(data),
+        content_type="application/json",
+    )
+
+    response_data = response.json()
+
+    assert response.status_code == 400
+    assert data_expected == response_data
+
+
+def test_update_shirt_with_field_unknown(client):
+    data = {
+        "size": "G",
+        "color": "Yellow",
+        "brand": "ZaraMF",
+        "price": 110,
+        "eita": "vish",
+    }
+
+    data_expected = {
+        "id": 1,
+        "size": "G",
+        "color": "Yellow",
+        "brand": "ZaraMF",
+        "price": 110.0,
+        "slug": "ZaraMFG",
+    }
+
+    url = reverse("shirt-detail", kwargs={"pk": 1})
+    response = client.put(
+        url,
+        data=json.dumps(data),
+        content_type="application/json",
+    )
+    response_data = response.json()
+    
+    assert response.status_code == 200
+    assert data_expected == response_data
