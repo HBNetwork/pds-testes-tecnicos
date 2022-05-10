@@ -1,4 +1,17 @@
 # Automation Store
+
+## Install and Run
+
+```shell
+# Run this command to create a virtual environment and install requirements
+$ make install
+
+# Activate the virtual environment created:
+$ source venv/bin/activate
+
+# Run the project
+$ make run
+```
 ## Considerations about the solution:
 We choice for our fashion-related resource a Shirt.
 
@@ -26,7 +39,7 @@ The Django Rest Framework disponibilize a web interface to access endpoints crea
 - [V] API to Update fashion-related resource.
 - [V] API to Delete fashion-related resource.
 - [V] Create a frontend to the API.
-- [ ] Provide a way for us to run your application locally with all of its' requirements.
+- [V] Provide a way for us to run your application locally with all of its' requirements.
     - [ ] An alternative is to host it somewhere we can interact with the API and frontend.
 - [ ] It would be great to document the steps required to that on the README.
 - [ ] Create an endpoint to populate data into the model/table using a CSV file.
