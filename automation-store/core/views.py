@@ -37,7 +37,7 @@ class ShirtViewSet(viewsets.ViewSet):
         serializer = ShirtSerializer(shirt[0])
         return Response(serializer.data, status.HTTP_200_OK)
 
-    def update(self, request, pk=None):       
+    def partial_update(self, request, pk=None):       
         serializer = ShirtSerializer(data=request.data, partial=True)
         if not serializer.is_valid():
             return Response(
@@ -68,3 +68,18 @@ class ShirtViewSet(viewsets.ViewSet):
 
         serializer = ShirtSerializer(shirt)
         return Response(serializer.data, status.HTTP_200_OK)
+
+    def destroy(self, request, pk=None):
+        import ipdb; ipdb.set_trace()
+        
+        shirt = list(filter(lambda shirt: shirt.id == int(pk), self.list_of_shirt))
+
+        if not shirt:
+            return Response(
+                {"message": "Resource not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        
+        self.list_of_shirt.remove(shirt[0])
+
+        return Response("", status.HTTP_200_OK)

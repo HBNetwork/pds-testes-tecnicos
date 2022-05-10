@@ -143,7 +143,7 @@ def test_update_shirt(client):
     }
 
     url = reverse("shirt-detail", kwargs={"pk": 1})
-    response = client.put(
+    response = client.patch(
         url,
         data=json.dumps(data),
         content_type="application/json",
@@ -164,7 +164,7 @@ def test_update_shirt_with_id_not_found(client):
     data_expected = {"message": "Resource not found."}
 
     url = reverse("shirt-detail", kwargs={"pk": 10})
-    response = client.put(
+    response = client.patch(
         url,
         data=json.dumps(data),
         content_type="application/json",
@@ -186,7 +186,7 @@ def test_update_shirt_with_invalid_price(client):
     data_expected = {"price": ["A valid number is required."]}
 
     url = reverse("shirt-detail", kwargs={"pk": 1})
-    response = client.put(
+    response = client.patch(
         url,
         data=json.dumps(data),
         content_type="application/json",
@@ -214,7 +214,7 @@ def test_partial_update_shirt(client):
     }
 
     url = reverse("shirt-detail", kwargs={"pk": 1})
-    response = client.put(
+    response = client.patch(
         url,
         data=json.dumps(data),
         content_type="application/json",
@@ -235,7 +235,7 @@ def test_partial_update_shirt_with_invalid_price(client):
     data_expected = {"price": ["A valid number is required."]}
 
     url = reverse("shirt-detail", kwargs={"pk": 1})
-    response = client.put(
+    response = client.patch(
         url,
         data=json.dumps(data),
         content_type="application/json",
@@ -266,12 +266,32 @@ def test_update_shirt_with_field_unknown(client):
     }
 
     url = reverse("shirt-detail", kwargs={"pk": 1})
-    response = client.put(
+    response = client.patch(
         url,
         data=json.dumps(data),
         content_type="application/json",
     )
     response_data = response.json()
-    
+
     assert response.status_code == 200
     assert data_expected == response_data
+
+
+def test_remove_shirt(client):
+    url = reverse("shirt-detail", kwargs={"pk": 1})
+    response = client.delete(
+        url,
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+
+
+def test_remove_shirt_with_id_not_found(client):
+    url = reverse("shirt-detail", kwargs={"pk": 10})
+    response = client.delete(
+        url,
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200

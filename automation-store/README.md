@@ -6,7 +6,7 @@ We choice for our fashion-related resource a Shirt.
 - [V] API to Create fashion-related resource.
 - [V] API to Retrieve fashion-related resource.
 - [V] API to Update fashion-related resource.
-- [ ] API to Delete fashion-related resource.
+- [V] API to Delete fashion-related resource.
 - [ ] Create a frontend to the API.
 - [ ] Provide a way for us to run your application locally with all of its' requirements.
 - [ ] An alternative is to host it somewhere we can interact with the API and frontend.
