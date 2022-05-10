@@ -1,5 +1,5 @@
 from rest_framework import routers
-from .views import TshirtViewSet
+from .views import ShirtViewSet
 
 router = routers.DefaultRouter(trailing_slash=False)
-router.register(r"tshirt", TshirtViewSet, basename="tshirt")
+router.register(r"shirt", ShirtViewSet, basename="shirt")
