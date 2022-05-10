@@ -14,10 +14,21 @@ class ShirtViewSet(viewsets.ViewSet):
 
     def create(self, request):
         serializer = ShirtSerializer(data=request.data)
-        if serializer.is_valid():
-            return Response([], status.HTTP_201_CREATED)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+
+        self.list_of_shirt.append(
+            Shirt(
+                id=len(self.list_of_shirt),
+                size=serializer["size"],
+                color=serializer["color"],
+                brand=serializer["brand"],
+                price=serializer["price"],
+            )
+        )
+
+        return Response([], status.HTTP_201_CREATED)
 
     def list(self, request):
         serializer = ShirtSerializer(self.list_of_shirt, many=True)
@@ -37,14 +48,14 @@ class ShirtViewSet(viewsets.ViewSet):
         serializer = ShirtSerializer(shirt[0])
         return Response(serializer.data, status.HTTP_200_OK)
 
-    def partial_update(self, request, pk=None):       
+    def partial_update(self, request, pk=None):
         serializer = ShirtSerializer(data=request.data, partial=True)
         if not serializer.is_valid():
             return Response(
                 serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST,
             )
-    
+
         shirt = list(filter(lambda shirt: shirt.id == int(pk), self.list_of_shirt))
 
         if not shirt:
@@ -70,8 +81,6 @@ class ShirtViewSet(viewsets.ViewSet):
         return Response(serializer.data, status.HTTP_200_OK)
 
     def destroy(self, request, pk=None):
-        import ipdb; ipdb.set_trace()
-        
         shirt = list(filter(lambda shirt: shirt.id == int(pk), self.list_of_shirt))
 
         if not shirt:
@@ -79,7 +88,7 @@ class ShirtViewSet(viewsets.ViewSet):
                 {"message": "Resource not found."},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        
+
         self.list_of_shirt.remove(shirt[0])
 
         return Response("", status.HTTP_200_OK)
