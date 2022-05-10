@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  app:
+    restart: always
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    working_dir: /home/user/server/app
+    volumes:
+      - .:/home/user/server
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+      - SECRET_KEY=n@bp1548g2w5!oag^&m&gvb*u0#gw*
+      - ALLOWED_HOSTS=*
+
+  db:
+    image: postgres:12-alpine
+    restart: always
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - .pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
