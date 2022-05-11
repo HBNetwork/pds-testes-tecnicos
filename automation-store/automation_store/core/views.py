@@ -1,15 +1,17 @@
-from rest_framework import viewsets
+from decimal import Decimal
+
+from rest_framework import status, viewsets
 from rest_framework.response import Response
-from .serializers import ShirtSerializer
-from rest_framework import status
+
 from .domain import Shirt
+from .serializers import ShirtSerializer
 
 
 # Create your views here.
 class ShirtViewSet(viewsets.ViewSet):
     list_of_shirt = [
-        Shirt(1, "M", "Black", "Nike", 100),
-        Shirt(2, "GG", "Pink", "Nike", 120),
+        Shirt("M", "Black", "Nike", Decimal(100), 1),
+        Shirt("GG", "Pink", "Nike", Decimal(120), 2),
     ]
 
     def create(self, request):
@@ -22,10 +24,10 @@ class ShirtViewSet(viewsets.ViewSet):
         self.list_of_shirt.append(
             Shirt(
                 id=len(self.list_of_shirt),
-                size=serializer["size"],
-                color=serializer["color"],
-                brand=serializer["brand"],
-                price=serializer["price"],
+                size=serializer.data["size"],
+                color=serializer.data["color"],
+                brand=serializer.data["brand"],
+                price=Decimal(serializer.data["price"]),
             )
         )
 

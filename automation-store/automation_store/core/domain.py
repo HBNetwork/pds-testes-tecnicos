@@ -1,14 +1,17 @@
 # shoes, pants, shirts
 
 
+from decimal import Decimal
+
+
 class Shirt:
     def __init__(
         self,
-        id: int = None, #TODO: Type annotation
         size: None,
         color: None,
         brand: None,
-        price: None,
+        price: Decimal = 0.0,
+        id: int = None,
     ) -> None:
         self.id = id
         self.size = size
