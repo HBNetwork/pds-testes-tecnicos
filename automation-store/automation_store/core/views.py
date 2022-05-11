@@ -18,6 +18,7 @@ class ShirtViewSet(viewsets.ViewSet):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
 
+        # ShirtService().create(Shirt(...))
         self.list_of_shirt.append(
             Shirt(
                 id=len(self.list_of_shirt),
@@ -31,11 +32,13 @@ class ShirtViewSet(viewsets.ViewSet):
         return Response([], status.HTTP_201_CREATED)
 
     def list(self, request):
+        #serializer = ShirtSerializer(ShirtService().all(), many=True)
         serializer = ShirtSerializer(self.list_of_shirt, many=True)
         return Response(serializer.data, status.HTTP_200_OK)
 
     def retrieve(self, request, pk=None):
         # filter X list comprehension
+        #shirt = ShirtService().get(pk)
         shirt = list(filter(lambda shirt: shirt.id == int(pk), self.list_of_shirt))
         # shirt = [s for s in self.list_of_shirt if s.id == int(pk)][0]
 
@@ -55,6 +58,11 @@ class ShirtViewSet(viewsets.ViewSet):
                 serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # ss = ShirtService()
+        # shirt = ss.get(pk)
+        # shirt.update(**data)
+        # ss.update(shirt) | ss.update(pk, **data)
 
         shirt = list(filter(lambda shirt: shirt.id == int(pk), self.list_of_shirt))
 
@@ -81,6 +89,7 @@ class ShirtViewSet(viewsets.ViewSet):
         return Response(serializer.data, status.HTTP_200_OK)
 
     def destroy(self, request, pk=None):
+        # ShirtService().delete(pk)
         shirt = list(filter(lambda shirt: shirt.id == int(pk), self.list_of_shirt))
 
         if not shirt:

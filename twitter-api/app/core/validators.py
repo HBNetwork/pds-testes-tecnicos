@@ -29,7 +29,7 @@ def can_post(user_id: int):
     ).count()
 
     if count >= 5:
-        raise MaximumLimitPostsForToday()
+        raise MaximumLimitPostsForToday("...")
 
     return True
 

@@ -58,3 +58,4 @@ The Django Rest Framework disponibilize a web interface to access endpoints crea
 - [ ] You handle the documentation with love and care
 - [ ] The frontend consumes ALL the backend API endpoints of the resource,
 - [ ] You use Docker.
+- [ ] Search.

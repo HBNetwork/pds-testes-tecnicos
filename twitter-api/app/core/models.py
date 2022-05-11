@@ -24,6 +24,10 @@ class User(models.Model):
         related_name="followers",
     )
 
+    @property
+    def total_posts(self):
+        return self.post_set.count()
+
 
 class Post(models.Model):
     class Type(models.TextChoices):

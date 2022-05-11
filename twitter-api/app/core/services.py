@@ -7,8 +7,8 @@ from core.schemas import RepostInSchema
 from core.schemas import UnfollowUserInSchema
 
 
-def create_post(user_id: int, payload: PostInSchema):
-    post = Post.objects.create(**payload.dict(), user_id=user_id)
+def create_post(user_id: int, **data):
+    post = Post.objects.create(**data, user_id=user_id)
     return post
 
 

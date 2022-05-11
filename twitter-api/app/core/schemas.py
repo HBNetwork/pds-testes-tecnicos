@@ -7,7 +7,7 @@ from pydantic import constr
 
 
 class PostInSchema(Schema):
-    content: constr(max_length=777)
+    content: constr(max_length=777)  # Importa de um único lugar
 
 
 class PostOutSchema(Schema):
