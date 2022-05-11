@@ -12,74 +12,23 @@ def test_create_new_shirt(client):
         "size": "M",
         "color": "black",
         "brand": "ZaraMF",
-        "price": 50,
+        "price": 50.0,
     }
     response = client.post(r("shirt-list"), data=data)
     assert response.status_code == 201
 
 
-def test_fail_to_create_new_shirt(client):
+def test_fail_to_create_new_shirt_without_required_fields(client, subtests):
+    expect_keys = ("size", "color", "brand", "price")
+    expect_message = ['This field is required.']
+    
     response = client.post(r("shirt-list"), data={})
-    d = response.json()
-
-    # Usar subtests para não parar no 1º assert False.
-    for k in ("campo1", "c2", "...", "cn"):
-        assert "k está no dicionário de erros"
-
-def test_create_new_shirt_without_size(client):
-    url = r("shirt-list")
-    data = {
-        "color": "black",
-        "brand": "ZaraMF",
-        "price": 50,  #TODO: Usar Decimal para dinheiro. NUNCA FLOAT!
-    }
-    response = client.post(url, data=data)
-    assert response.status_code == 400
-
-
-def test_create_new_shirt_without_color(client):
-    url = r("shirt-list")
-    data = {
-        "size": "M",
-        "brand": "ZaraMF",
-        "price": 50,
-    }
-    response = client.post(url, data=data)
-    assert response.status_code == 400
-
-
-def test_create_new_shirt_without_brand(client):
-    url = r("shirt-list")
-    data = {
-        "size": "M",
-        "color": "black",
-        "price": 50,
-    }
-    response = client.post(url, data=data)
-    assert response.status_code == 400
-
-
-def test_create_new_shirt_without_brand(client):
-    url = r("shirt-list")
-    data = {
-        "size": "M",
-        "color": "black",
-        "brand": "ZaraMF",
-    }
-    response = client.post(url, data=data)
-    assert response.status_code == 400
-
-
-def test_create_new_shirt_with_size_above_max_size(client):
-    url = r("shirt-list")
-    data = {
-        "size": "M" * 15,
-        "color": "black",
-        "brand": "ZaraMF",
-        "price": 50,
-    }
-    response = client.post(url, data=data)
-    assert response.status_code == 400
+    data = response.json()
+    
+    for k in expect_keys:
+        with subtests.test("custom message", i=k):
+            assert k in data
+            assert data[k] == expect_message
 
 
 def test_create_new_shirt_with_string_in_price(client):
@@ -121,7 +70,7 @@ def test_retrive_shirt_checking_expected_fields(client):
         "size": "M",
         "color": "Black",
         "brand": "Nike",
-        "price": 100,
+        "price": "100.00",
         "slug": "NikeM",
     }
 
@@ -137,7 +86,7 @@ def test_update_shirt(client):
         "size": "G",
         "color": "Yellow",
         "brand": "ZaraMF",
-        "price": 110,
+        "price": 110.0,
     }
 
     data_expected = {
@@ -145,7 +94,7 @@ def test_update_shirt(client):
         "size": "G",
         "color": "Yellow",
         "brand": "ZaraMF",
-        "price": 110.0,
+        "price": "110.00",
         "slug": "ZaraMFG",
     }
 
@@ -166,7 +115,7 @@ def test_update_shirt_with_id_not_found(client):
         "size": "G",
         "color": "Yellow",
         "brand": "ZaraMF",
-        "price": 110,
+        "price": 110.0,
     }
     data_expected = {"message": "Resource not found."}
 
@@ -208,7 +157,7 @@ def test_update_shirt_with_invalid_price(client):
 def test_partial_update_shirt(client):
     data = {
         "size": "G",
-        "price": 195,
+        "price": 195.0,
     }
 
     data_expected = {
@@ -216,7 +165,7 @@ def test_partial_update_shirt(client):
         "size": "G",
         "color": "Yellow",
         "brand": "ZaraMF",
-        "price": 195.0,
+        "price": "195.00",
         "slug": "ZaraMFG",
     }
 
@@ -259,7 +208,7 @@ def test_update_shirt_with_field_unknown(client):
         "size": "G",
         "color": "Yellow",
         "brand": "ZaraMF",
-        "price": 110,
+        "price": 110.0,
         "eita": "vish",
     }
 
@@ -268,7 +217,7 @@ def test_update_shirt_with_field_unknown(client):
         "size": "G",
         "color": "Yellow",
         "brand": "ZaraMF",
-        "price": 110.0,
+        "price": "110.00",
         "slug": "ZaraMFG",
     }
 
