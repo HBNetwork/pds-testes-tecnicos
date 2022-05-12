@@ -1,9 +1,9 @@
 from datetime import timedelta
 
 import pytest
-from core import selects
 from core.models import Post
 from core.models import User
+from core.services import PostService
 from django.utils import timezone
 from model_bakery import baker
 
@@ -12,7 +12,7 @@ from model_bakery import baker
 def test_all(user):
     baker.make(Post, _quantity=10)
 
-    posts = selects.posts(user.id)
+    posts = PostService().all_posts()
 
     assert len(posts) == 10
 
@@ -22,7 +22,7 @@ def test_dont_select_without_following(user):
     other_user = baker.make(User)
     baker.make(Post, _quantity=10, user=other_user)
 
-    posts = selects.posts(user.id, query="following")
+    posts = PostService().following_posts(user.id)
 
     assert len(posts) == 0
 
@@ -33,7 +33,7 @@ def test_select_following(user):
     baker.make(Post, _quantity=10, user=other_user)
     user.following.add(other_user.id)
 
-    posts = selects.posts(user.id, query="following")
+    posts = PostService().following_posts(user.id)
 
     assert len(posts) == 10
 
@@ -47,7 +47,7 @@ def test_order_by(user):
     post2 = baker.make(Post, created_at=three_hours_ago)
     post1 = baker.make(Post, created_at=now)
 
-    posts = selects.posts(user.id)
+    posts = PostService().all_posts()
 
     assert posts[0] == post1
     assert posts[1] == post2

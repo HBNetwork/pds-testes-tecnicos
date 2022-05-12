@@ -72,6 +72,18 @@ class PostService:
         )
         return quote_post
 
+    def all_posts(self):
+        return Post.objects.all().order_by("-created_at")
+
+    def following_posts(self, user_id):
+        user = User.objects.get(id=user_id)
+
+        return (
+            Post.objects.all()
+            .filter(user_id__in=user.following.all().values("id"))
+            .order_by("-created_at")
+        )
+
 
 class UserService:
     def is_following(self, user_id, following_user_id):

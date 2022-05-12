@@ -14,17 +14,3 @@ def user_data(user_id: int) -> UserOutSchema:
         followers=user.followers.count(),
         posts=Post.objects.filter(user_id=user.id).count(),
     )
-
-
-def posts(user_id: int, query: str = "all"):
-    queryset = Post.objects.all()
-
-    if query == "following":
-        user = User.objects.get(id=user_id)
-        queryset = queryset.filter(
-            user_id__in=user.following.all().values("id")
-        )
-
-    queryset = queryset.order_by("-created_at")
-
-    return queryset

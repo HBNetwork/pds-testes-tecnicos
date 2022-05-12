@@ -119,7 +119,9 @@ def posts(request, query: str = "all"):
     - **all** - Get all posts.
     - **following** - Get posts for people you are following.
     """
-    return selects.posts(request.user.id, query)
+    if query == "following":
+        return PostService().following_posts(request.user.id)
+    return PostService().all_posts()
 
 
 @api.post(
