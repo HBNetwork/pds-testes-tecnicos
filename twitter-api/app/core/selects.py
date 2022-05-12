@@ -28,7 +28,3 @@ def posts(user_id: int, query: str = "all"):
     queryset = queryset.order_by("-created_at")
 
     return queryset
-
-
-def user_posts(user_id: int):
-    return Post.objects.filter(user_id=user_id).order_by("-created_at")

@@ -88,7 +88,7 @@ def unfollow(request, user_id: int):
 )
 @paginate(PageNumberPagination, page_size=5)
 def user_posts(request, user_id: int):
-    return selects.user_posts(user_id)
+    return UserService().posts_for(user_id)
 
 
 @api.post(

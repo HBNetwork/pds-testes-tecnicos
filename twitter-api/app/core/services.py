@@ -77,3 +77,6 @@ class UserService:
     def is_following(self, user_id, following_user_id):
         user = User.objects.get(id=user_id)
         return user.following.filter(id=following_user_id).exists()
+
+    def posts_for(self, user_id):
+        return Post.objects.filter(user_id=user_id).order_by("-created_at")
