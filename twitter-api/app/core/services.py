@@ -5,19 +5,17 @@ from core.models import User
 
 
 class CannotFollowYourself(Exception):
-    def __str__(self):
-        return "You can not follow yourself."
+    ...
 
 
 class MaximumLimitPostsForToday(Exception):
-    def __str__(self):
-        return "You have reached the maximum number for creating posts today."
+    ...
 
 
 class FollowService:
     def can_follow(self, user_id: int, following_id: int):
         if user_id == following_id:
-            raise CannotFollowYourself()
+            raise CannotFollowYourself("You can not follow yourself.")
         return True
 
     def follow_user(self, user_id: int, data):
@@ -42,7 +40,9 @@ class PostService:
         ).count()
 
         if count >= 5:
-            raise MaximumLimitPostsForToday("...")
+            raise MaximumLimitPostsForToday(
+                "You have reached the maximum number for creating posts today."
+            )
 
         return True
 

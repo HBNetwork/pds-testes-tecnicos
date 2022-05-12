@@ -26,4 +26,7 @@ def test_bad_request(client_authenticated, user):
     resp = client_authenticated.post(make_url(posts[0].id))
 
     assert resp.status_code == 400
-    assert resp.json()["message"] == str(MaximumLimitPostsForToday())
+    assert (
+        resp.json()["message"]
+        == "You have reached the maximum number for creating posts today."
+    )
