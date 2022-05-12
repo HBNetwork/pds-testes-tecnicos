@@ -33,10 +33,10 @@ class CoreService:
         )
         return quote_post
 
-
-def follow_user(user_id: int, payload: FollowingUserInSchema):
-    user = User.objects.get(id=user_id)
-    user.following.add(payload.user_id)
+    def follow_user(self, user_id: int, data):
+        validators.can_follow(user_id, data.get("user_id"))
+        user = User.objects.get(id=user_id)
+        user.following.add(data.get("user_id"))
 
 
 def unfollow_user(user_id: int, payload: UnfollowUserInSchema):

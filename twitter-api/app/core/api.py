@@ -51,8 +51,7 @@ def follow(request, user_id: int):
     try:
         payload = FollowingUserInSchema(user_id=user_id)
         get_object_or_404(User, id=payload.user_id)
-        validators.can_follow(request.user.id, payload.user_id)
-        services.follow_user(request.user.id, payload)
+        CoreService().follow_user(request.user.id, payload.dict())
     except CannotFollowYourself as e:
         return 400, {"message": str(e)}
     except Http404:
