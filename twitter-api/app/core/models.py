@@ -1,8 +1,11 @@
 from django.db import models
-
-from .validators import alphanumeric
+from django.core.validators import RegexValidator
 
 POST_CONTENT_LIMIT = 777
+
+alphanumeric = RegexValidator(
+    r"^[0-9a-zA-Z]*$", "Only alphanumeric characters are allowed."
+)
 
 
 class User(models.Model):
