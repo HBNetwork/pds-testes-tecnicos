@@ -8,11 +8,6 @@ class MaximumLimitPostsForToday(Exception):
         return "You have reached the maximum number for creating posts today."
 
 
-class CannotFollowYourself(Exception):
-    def __str__(self):
-        return "You can not follow yourself."
-
-
 alphanumeric = RegexValidator(
     r"^[0-9a-zA-Z]*$", "Only alphanumeric characters are allowed."
 )
@@ -31,10 +26,4 @@ def can_post(user_id: int):
     if count >= 5:
         raise MaximumLimitPostsForToday("...")
 
-    return True
-
-
-def can_follow(user_id: int, following_id: int):
-    if user_id == following_id:
-        raise CannotFollowYourself()
     return True

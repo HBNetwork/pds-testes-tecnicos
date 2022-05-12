@@ -3,6 +3,11 @@ from core.models import Post
 from core.models import User
 
 
+class CannotFollowYourself(Exception):
+    def __str__(self):
+        return "You can not follow yourself."
+
+
 class CoreService:
     def create_post(self, user_id: int, data):
         validators.can_post(user_id)
@@ -30,8 +35,15 @@ class CoreService:
         )
         return quote_post
 
+
+class FollowService:
+    def can_follow(self, user_id: int, following_id: int):
+        if user_id == following_id:
+            raise CannotFollowYourself()
+        return True
+
     def follow_user(self, user_id: int, data):
-        validators.can_follow(user_id, data.get("user_id"))
+        self.can_follow(user_id, data.get("user_id"))
         user = User.objects.get(id=user_id)
         user.following.add(data.get("user_id"))
 

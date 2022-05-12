@@ -1,7 +1,7 @@
 import pytest
 from core.models import User
 from core.schemas import UnfollowUserInSchema
-from core.services import CoreService
+from core.services import FollowService
 from model_bakery import baker
 
 
@@ -11,6 +11,6 @@ def test_unfollow(user):
     user.following.add(unfollowing_user)
     payload = UnfollowUserInSchema(user_id=unfollowing_user.id)
 
-    CoreService().unfollow_user(user.id, payload.dict())
+    FollowService().unfollow_user(user.id, payload.dict())
 
     assert user.following.count() == 0

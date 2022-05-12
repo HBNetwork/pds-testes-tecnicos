@@ -1,10 +1,8 @@
 from typing import List
 
 from core import selects
-from core import services
-from core import validators
 from core.models import User
-from core.services import CoreService
+from core.services import CoreService, CannotFollowYourself, FollowService
 from core.schemas import FollowingUserInSchema
 from core.schemas import MessageSchema
 from core.schemas import PostInSchema
@@ -13,7 +11,6 @@ from core.schemas import QuotePostInSchema
 from core.schemas import RepostInSchema
 from core.schemas import UnfollowUserInSchema
 from core.schemas import UserOutSchema
-from core.validators import CannotFollowYourself
 from core.validators import MaximumLimitPostsForToday
 from django.http import Http404
 from django.shortcuts import get_object_or_404
@@ -51,7 +48,7 @@ def follow(request, user_id: int):
     try:
         payload = FollowingUserInSchema(user_id=user_id)
         get_object_or_404(User, id=payload.user_id)
-        CoreService().follow_user(request.user.id, payload.dict())
+        FollowService().follow_user(request.user.id, payload.dict())
     except CannotFollowYourself as e:
         return 400, {"message": str(e)}
     except Http404:
@@ -69,7 +66,7 @@ def unfollow(request, user_id: int):
     try:
         payload = UnfollowUserInSchema(user_id=user_id)
         get_object_or_404(User, id=user_id)
-        CoreService().unfollow_user(request.user.id, payload.dict())
+        FollowService().unfollow_user(request.user.id, payload.dict())
     except Http404:
         return 404, {"message": "User not found."}
 
