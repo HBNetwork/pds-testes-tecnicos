@@ -17,13 +17,36 @@ from core.schemas import QuotePostInSchema
 from core.schemas import RepostInSchema
 from core.schemas import UnfollowUserInSchema
 from core.schemas import UserOutSchema
-from django.http import Http404
-from django.shortcuts import get_object_or_404
 from ninja import NinjaAPI
 from ninja.pagination import PageNumberPagination
 from ninja.pagination import paginate
 
 api = NinjaAPI(title="X")
+
+
+@api.exception_handler(MaximumLimitPostsForToday)
+def maximum_limit_posts_for_today(request, exc):
+    return api.create_response(
+        request,
+        {"message": str(exc)},
+        status=400,
+    )
+
+@api.exception_handler(CannotFollowYourself)
+def cannot_follow_yourself(request, exc):
+    return api.create_response(
+        request,
+        {"message": str(exc)},
+        status=400,
+    )
+
+@api.exception_handler(User.DoesNotExist)
+def user_not_found(request, exc):
+    return api.create_response(
+        request,
+        {"message": "User not found."},
+        status=404,
+    )
 
 
 @api.get(
@@ -34,23 +57,20 @@ api = NinjaAPI(title="X")
     summary="Get user information",
 )
 def user(request, user_id):
-    try:
-        user = User.objects.get(id=user_id)
+    user = User.objects.get(id=user_id)
 
-        data = UserOutSchema(
-            id=user.id,
-            username=user.username,
-            joined_at=user.joined_at,
-            following=user.following.count(),
-            followers=user.followers.count(),
-            posts=user.total_posts,
-            is_following=UserService().is_following(request.user.id, user_id),
-        )
+    data = UserOutSchema(
+        id=user.id,
+        username=user.username,
+        joined_at=user.joined_at,
+        following=user.following.count(),
+        followers=user.followers.count(),
+        posts=user.total_posts,
+        is_following=UserService().is_following(request.user.id, user_id),
+    )
 
-        return data
+    return data
 
-    except User.DoesNotExist:
-        return 404, {"message": "User not found."}
 
 
 @api.post(
@@ -61,14 +81,9 @@ def user(request, user_id):
     summary="Follow a user",
 )
 def follow(request, user_id: int):
-    try:
-        payload = FollowingUserInSchema(user_id=user_id)
-        get_object_or_404(User, id=payload.user_id)
-        FollowService().follow_user(request.user.id, payload.dict())
-    except CannotFollowYourself as e:
-        return 400, {"message": str(e)}
-    except Http404:
-        return 404, {"message": "User not found."}
+    payload = FollowingUserInSchema(user_id=user_id)
+    User.objects.get(id=payload.user_id)
+    FollowService().follow_user(request.user.id, payload.dict())
 
 
 @api.post(
@@ -79,12 +94,9 @@ def follow(request, user_id: int):
     summary="Unfollow a user",
 )
 def unfollow(request, user_id: int):
-    try:
-        payload = UnfollowUserInSchema(user_id=user_id)
-        get_object_or_404(User, id=user_id)
-        FollowService().unfollow_user(request.user.id, payload.dict())
-    except Http404:
-        return 404, {"message": "User not found."}
+    payload = UnfollowUserInSchema(user_id=user_id)
+    User.objects.get(id=payload.user_id)
+    FollowService().unfollow_user(request.user.id, payload.dict())
 
 
 @api.get(
@@ -107,10 +119,7 @@ def user_posts(request, user_id: int):
     summary="Create post",
 )
 def create_post(request, payload: PostInSchema):
-    try:
-        return PostService().create_post(request.user.id, payload.dict())
-    except MaximumLimitPostsForToday as e:
-        return 400, {"message": str(e)}
+    return PostService().create_post(request.user.id, payload.dict())
 
 
 @api.get(
@@ -140,11 +149,8 @@ def posts(request, query: str = "all"):
     summary="Create repost",
 )
 def create_repost(request, post_id: int):
-    try:
-        payload = RepostInSchema(post_id=post_id)
-        return PostService().create_repost(request.user.id, payload.dict())
-    except MaximumLimitPostsForToday as e:
-        return 400, {"message": str(e)}
+    payload = RepostInSchema(post_id=post_id)
+    return PostService().create_repost(request.user.id, payload.dict())
 
 
 @api.post(
@@ -155,8 +161,5 @@ def create_repost(request, post_id: int):
     summary="Create quote post",
 )
 def create_quote_post(request, post_id: int, payload: QuotePostInSchema):
-    try:
-        payload.post_id = post_id
-        return PostService().create_quote_post(request.user.id, payload.dict())
-    except MaximumLimitPostsForToday as e:
-        return 400, {"message": str(e)}
+    payload.post_id = post_id
+    return PostService().create_quote_post(request.user.id, payload.dict())
