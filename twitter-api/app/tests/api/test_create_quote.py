@@ -1,6 +1,6 @@
 import pytest
 from core.models import Post
-from core.validators import MaximumLimitPostsForToday
+from core.services import MaximumLimitPostsForToday
 from django.urls import reverse
 from model_bakery import baker
 

@@ -1,14 +1,14 @@
 import pytest
 from core.models import Post
 from core.schemas import PostInSchema
-from core.services import CoreService
+from core.services import PostService
 
 
 @pytest.mark.django_db
 def test_create(user, faker):
     payload = PostInSchema(content=faker.text())
 
-    CoreService().create_post(user.id, payload.dict())
+    PostService().create_post(user.id, payload.dict())
 
     assert Post.objects.count() == 1
 
@@ -17,7 +17,7 @@ def test_create(user, faker):
 def test_save_correctly(user, faker):
     payload = PostInSchema(content=faker.text())
 
-    CoreService().create_post(user.id, payload.dict())
+    PostService().create_post(user.id, payload.dict())
 
     post = Post.objects.first()
     assert post.user.id == user.id
@@ -28,6 +28,6 @@ def test_save_correctly(user, faker):
 def test_return(user, faker):
     payload = PostInSchema(content=faker.text())
 
-    post = CoreService().create_post(user.id, payload.dict())
+    post = PostService().create_post(user.id, payload.dict())
 
     assert isinstance(post, Post)

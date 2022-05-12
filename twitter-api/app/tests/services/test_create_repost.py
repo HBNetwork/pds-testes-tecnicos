@@ -2,7 +2,7 @@ import pytest
 from core.models import Post
 from core.models import User
 from core.schemas import RepostInSchema
-from core.services import CoreService
+from core.services import PostService
 from model_bakery import baker
 
 
@@ -11,7 +11,7 @@ def test_create(user):
     post = baker.make(Post, user=user)
     payload = RepostInSchema(post_id=post.id)
 
-    CoreService().create_repost(user.id, payload.dict())
+    PostService().create_repost(user.id, payload.dict())
 
     assert Post.objects.count() == 2
 
@@ -22,7 +22,7 @@ def test_save_correctly(user):
     post = baker.make(Post, user=other_user)
     payload = RepostInSchema(post_id=post.id)
 
-    CoreService().create_repost(user.id, payload.dict())
+    PostService().create_repost(user.id, payload.dict())
 
     repost = Post.objects.last()
     assert repost.id != post.id
@@ -35,6 +35,6 @@ def test_return(user):
     post = baker.make(Post)
     payload = RepostInSchema(post_id=post.id)
 
-    repost = CoreService().create_repost(user.id, payload.dict())
+    repost = PostService().create_repost(user.id, payload.dict())
 
     assert isinstance(repost, Post)

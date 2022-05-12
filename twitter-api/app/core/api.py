@@ -2,7 +2,12 @@ from typing import List
 
 from core import selects
 from core.models import User
-from core.services import CoreService, CannotFollowYourself, FollowService
+from core.services import (
+    CannotFollowYourself,
+    FollowService,
+    MaximumLimitPostsForToday,
+    PostService,
+)
 from core.schemas import FollowingUserInSchema
 from core.schemas import MessageSchema
 from core.schemas import PostInSchema
@@ -11,7 +16,6 @@ from core.schemas import QuotePostInSchema
 from core.schemas import RepostInSchema
 from core.schemas import UnfollowUserInSchema
 from core.schemas import UserOutSchema
-from core.validators import MaximumLimitPostsForToday
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from ninja import NinjaAPI
@@ -92,7 +96,7 @@ def user_posts(request, user_id: int):
 )
 def create_post(request, payload: PostInSchema):
     try:
-        return CoreService().create_post(request.user.id, payload.dict())
+        return PostService().create_post(request.user.id, payload.dict())
     except MaximumLimitPostsForToday as e:
         return 400, {"message": str(e)}
 
@@ -124,7 +128,7 @@ def posts(request, query: str = "all"):
 def create_repost(request, post_id: int):
     try:
         payload = RepostInSchema(post_id=post_id)
-        return CoreService().create_repost(request.user.id, payload.dict())
+        return PostService().create_repost(request.user.id, payload.dict())
     except MaximumLimitPostsForToday as e:
         return 400, {"message": str(e)}
 
@@ -139,6 +143,6 @@ def create_repost(request, post_id: int):
 def create_quote_post(request, post_id: int, payload: QuotePostInSchema):
     try:
         payload.post_id = post_id
-        return CoreService().create_quote_post(request.user.id, payload.dict())
+        return PostService().create_quote_post(request.user.id, payload.dict())
     except MaximumLimitPostsForToday as e:
         return 400, {"message": str(e)}
