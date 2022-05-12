@@ -69,7 +69,7 @@ def unfollow(request, user_id: int):
     try:
         payload = UnfollowUserInSchema(user_id=user_id)
         get_object_or_404(User, id=user_id)
-        services.unfollow_user(request.user.id, payload)
+        CoreService().unfollow_user(request.user.id, payload.dict())
     except Http404:
         return 404, {"message": "User not found."}
 

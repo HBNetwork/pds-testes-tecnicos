@@ -1,9 +1,6 @@
 from core import validators
 from core.models import Post
 from core.models import User
-from core.schemas import FollowingUserInSchema
-from core.schemas import QuotePostInSchema
-from core.schemas import UnfollowUserInSchema
 
 
 class CoreService:
@@ -38,7 +35,6 @@ class CoreService:
         user = User.objects.get(id=user_id)
         user.following.add(data.get("user_id"))
 
-
-def unfollow_user(user_id: int, payload: UnfollowUserInSchema):
-    user = User.objects.get(id=user_id)
-    user.following.remove(payload.user_id)
+    def unfollow_user(self, user_id: int, data):
+        user = User.objects.get(id=user_id)
+        user.following.remove(data.get("user_id"))
