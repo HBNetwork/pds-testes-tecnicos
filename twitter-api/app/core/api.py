@@ -4,6 +4,7 @@ from core import selects
 from core import services
 from core import validators
 from core.models import User
+from core.services import CoreService
 from core.schemas import FollowingUserInSchema
 from core.schemas import MessageSchema
 from core.schemas import PostInSchema
@@ -95,8 +96,7 @@ def user_posts(request, user_id: int):
 )
 def create_post(request, payload: PostInSchema):
     try:
-        validators.can_post(request.user.id)
-        return services.create_post(request.user.id, payload)
+        return CoreService().create_post(request.user.id, payload.dict())
     except MaximumLimitPostsForToday as e:
         return 400, {"message": str(e)}
 

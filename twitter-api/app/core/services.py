@@ -1,15 +1,17 @@
+from core import validators
 from core.models import Post
 from core.models import User
 from core.schemas import FollowingUserInSchema
-from core.schemas import PostInSchema
 from core.schemas import QuotePostInSchema
 from core.schemas import RepostInSchema
 from core.schemas import UnfollowUserInSchema
 
 
-def create_post(user_id: int, **data):
-    post = Post.objects.create(**data, user_id=user_id)
-    return post
+class CoreService:
+    def create_post(self, user_id: int, data):
+        validators.can_post(user_id)
+        post = Post.objects.create(**data, user_id=user_id)
+        return post
 
 
 def create_repost(user_id: int, payload: RepostInSchema):
