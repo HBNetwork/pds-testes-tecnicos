@@ -1,15 +1,15 @@
-import os
 from pathlib import Path
 
 import dj_database_url
+from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get("SECRET_KEY", "secret")
+SECRET_KEY = config("SECRET_KEY")
 
-DEBUG = os.environ.get("DEBUG", False)
+DEBUG = config("DEBUG", default=False, cast=bool)
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(",")
+ALLOWED_HOSTS = config("ALLOWED_HOSTS").split(",")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -54,7 +54,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "main.wsgi.application"
 
 DATABASES = {
-    "default": dj_database_url.parse(os.environ.get("DATABASE_URL")),
+    "default": dj_database_url.parse(config("DATABASE_URL")),
 }
 
 AUTH_PASSWORD_VALIDATORS = [
