@@ -143,7 +143,6 @@ def create_repost(request, post_id: int):
 def create_quote_post(request, post_id: int, payload: QuotePostInSchema):
     try:
         payload.post_id = post_id
-        validators.can_post(request.user.id)
-        return services.create_quote_post(request.user.id, payload)
+        return CoreService().create_quote_post(request.user.id, payload.dict())
     except MaximumLimitPostsForToday as e:
         return 400, {"message": str(e)}

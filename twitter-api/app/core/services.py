@@ -22,16 +22,16 @@ class CoreService:
         )
         return repost
 
-
-def create_quote_post(user_id: int, payload: QuotePostInSchema):
-    post = Post.objects.get(id=payload.post_id)
-    quote_post = Post.objects.create(
-        user_id=user_id,
-        type=Post.Type.QUOTE,
-        content=post.content,
-        comment=payload.comment,
-    )
-    return quote_post
+    def create_quote_post(self, user_id: int, data):
+        validators.can_post(user_id)
+        post = Post.objects.get(id=data.get("post_id"))
+        quote_post = Post.objects.create(
+            user_id=user_id,
+            type=Post.Type.QUOTE,
+            content=post.content,
+            comment=data.get("comment"),
+        )
+        return quote_post
 
 
 def follow_user(user_id: int, payload: FollowingUserInSchema):
