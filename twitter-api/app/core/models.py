@@ -2,6 +2,8 @@ from django.db import models
 
 from .validators import alphanumeric
 
+POST_CONTENT_LIMIT = 777
+
 
 class User(models.Model):
     username = models.CharField(
@@ -35,7 +37,7 @@ class Post(models.Model):
         REPOST = "RE", "Repost"
         QUOTE = "QU", "Quote"
 
-    content = models.CharField(max_length=777)
+    content = models.CharField(max_length=POST_CONTENT_LIMIT)
     created_at = models.DateTimeField(auto_now_add=True)
     comment = models.TextField(blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)

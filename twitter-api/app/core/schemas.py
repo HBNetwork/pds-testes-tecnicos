@@ -1,13 +1,14 @@
 from datetime import datetime
 from typing import Optional
 
+from core.models import POST_CONTENT_LIMIT
 from ninja import Schema
 from pydantic import BaseModel
 from pydantic import constr
 
 
 class PostInSchema(Schema):
-    content: constr(max_length=777)  # Importa de um único lugar
+    content: constr(max_length=POST_CONTENT_LIMIT)
 
 
 class PostOutSchema(Schema):
@@ -25,7 +26,7 @@ class RepostInSchema(Schema):
 
 class QuotePostInSchema(Schema):
     post_id: Optional[int] = None
-    comment: constr(max_length=777)
+    comment: constr(max_length=POST_CONTENT_LIMIT)
 
 
 class UserOutSchema(Schema):
