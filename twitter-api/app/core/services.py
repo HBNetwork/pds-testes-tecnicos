@@ -3,7 +3,6 @@ from core.models import Post
 from core.models import User
 from core.schemas import FollowingUserInSchema
 from core.schemas import QuotePostInSchema
-from core.schemas import RepostInSchema
 from core.schemas import UnfollowUserInSchema
 
 
@@ -13,15 +12,15 @@ class CoreService:
         post = Post.objects.create(**data, user_id=user_id)
         return post
 
-
-def create_repost(user_id: int, payload: RepostInSchema):
-    post = Post.objects.get(id=payload.post_id)
-    repost = Post.objects.create(
-        user_id=user_id,
-        type=Post.Type.REPOST,
-        content=post.content,
-    )
-    return repost
+    def create_repost(self, user_id: int, data):
+        validators.can_post(user_id)
+        post = Post.objects.get(id=data.get("post_id"))
+        repost = Post.objects.create(
+            user_id=user_id,
+            type=Post.Type.REPOST,
+            content=post.content,
+        )
+        return repost
 
 
 def create_quote_post(user_id: int, payload: QuotePostInSchema):

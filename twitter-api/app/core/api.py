@@ -128,8 +128,7 @@ def posts(request, query: str = "all"):
 def create_repost(request, post_id: int):
     try:
         payload = RepostInSchema(post_id=post_id)
-        validators.can_post(request.user.id)
-        return services.create_repost(request.user.id, payload)
+        return CoreService().create_repost(request.user.id, payload.dict())
     except MaximumLimitPostsForToday as e:
         return 400, {"message": str(e)}
 
