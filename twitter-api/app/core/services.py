@@ -71,3 +71,9 @@ class PostService:
             comment=data.get("comment"),
         )
         return quote_post
+
+
+class UserService:
+    def is_following(self, user_id, following_user_id):
+        user = User.objects.get(id=user_id)
+        return user.following.filter(id=following_user_id).exists()

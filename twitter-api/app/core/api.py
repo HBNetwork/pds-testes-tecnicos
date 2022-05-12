@@ -1,4 +1,5 @@
 from typing import List
+from core.services import UserService
 
 from core import selects
 from core.models import User
@@ -7,6 +8,7 @@ from core.services import (
     FollowService,
     MaximumLimitPostsForToday,
     PostService,
+    UserService,
 )
 from core.schemas import FollowingUserInSchema
 from core.schemas import MessageSchema
@@ -35,7 +37,9 @@ api = NinjaAPI(title="Posterr")
 def user(request, user_id):
     try:
         data = selects.user_data(user_id)
-        data.is_following = selects.is_following(request.user.id, user_id)
+        data.is_following = UserService().is_following(
+            request.user.id, user_id
+        )
         return data
     except User.DoesNotExist:
         return 404, {"message": "User not found."}

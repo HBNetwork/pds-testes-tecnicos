@@ -3,11 +3,6 @@ from core.models import User
 from core.schemas import UserOutSchema
 
 
-def is_following(user_id: int, following_user_id: int):
-    user = User.objects.get(id=user_id)
-    return user.following.filter(id=following_user_id).exists()
-
-
 def user_data(user_id: int) -> UserOutSchema:
     user = User.objects.get(id=user_id)
 
