@@ -1,7 +1,6 @@
 from typing import List
 from core.services import UserService
 
-from core import selects
 from core.models import User
 from core.services import (
     CannotFollowYourself,
@@ -24,7 +23,7 @@ from ninja import NinjaAPI
 from ninja.pagination import PageNumberPagination
 from ninja.pagination import paginate
 
-api = NinjaAPI(title="Posterr")
+api = NinjaAPI(title="X")
 
 
 @api.get(
@@ -36,11 +35,20 @@ api = NinjaAPI(title="Posterr")
 )
 def user(request, user_id):
     try:
-        data = selects.user_data(user_id)
-        data.is_following = UserService().is_following(
-            request.user.id, user_id
+        user = User.objects.get(id=user_id)
+
+        data = UserOutSchema(
+            id=user.id,
+            username=user.username,
+            joined_at=user.joined_at,
+            following=user.following.count(),
+            followers=user.followers.count(),
+            posts=user.total_posts,
+            is_following=UserService().is_following(request.user.id, user_id),
         )
+
         return data
+
     except User.DoesNotExist:
         return 404, {"message": "User not found."}
 
