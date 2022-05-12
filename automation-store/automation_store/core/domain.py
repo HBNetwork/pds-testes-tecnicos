@@ -2,6 +2,7 @@
 
 
 from decimal import Decimal
+from .exceptions import ServiceResourceNotFoundException
 
 
 class Shirt:
@@ -26,25 +27,3 @@ class Shirt:
     def update(self, **data):
         for key, value in data.items():
             setattr(self, key, value)
-
-
-class ShirtService:
-    list_of_shirt = [
-        Shirt(1, "M", "Black", "Nike", 100),
-        Shirt(2, "GG", "Pink", "Nike", 120),
-    ]
-
-    def get(self, pk):
-        ...
-
-    def create(self, item: Shirt):
-        ...
-
-    def delete(self, pk):
-        ...
-
-    def update(self, item: Shirt):
-        ...
-
-    def __contains__(self, item: Shirt):
-        ...

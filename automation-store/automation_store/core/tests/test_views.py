@@ -25,6 +25,8 @@ def test_fail_to_create_new_shirt_without_required_fields(client, subtests):
     response = client.post(r("shirt-list"), data={})
     data = response.json()
     
+    assert response.status_code == 400
+
     for k in expect_keys:
         with subtests.test("custom message", i=k):
             assert k in data
