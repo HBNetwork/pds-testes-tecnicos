@@ -2,7 +2,6 @@
 
 
 from decimal import Decimal
-from .exceptions import ServiceResourceNotFoundException
 
 
 class Shirt:
@@ -11,7 +10,7 @@ class Shirt:
         size: None,
         color: None,
         brand: None,
-        price: Decimal = 0.0,
+        price: Decimal = Decimal(0),
         id: int = None,
     ) -> None:
         self.id = id

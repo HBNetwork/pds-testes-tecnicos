@@ -2,9 +2,9 @@ from decimal import Decimal
 
 import pytest
 
-from ..domain import Shirt
-from ..exceptions import ServiceResourceNotFoundException
-from ..services import ShirtService
+from automation_store.core.domain import Shirt
+from automation_store.core.exceptions import ServiceResourceDoesNotExistException
+from automation_store.core.services import ShirtService
 
 
 def test_list_all_shirt():
@@ -23,13 +23,12 @@ def test_get_shirt_by_id():
 
 def test_fail_get_shirt_not_found():
     service = ShirtService()
-    with pytest.raises(ServiceResourceNotFoundException):
+    with pytest.raises(ServiceResourceDoesNotExistException):
         service.get(pk=123)
 
 
 def test_create_a_shirt():
     shirt = Shirt(
-        id=3,
         size="M",
         color="black",
         brand="ZaraMF",
@@ -43,62 +42,63 @@ def test_create_a_shirt():
 
 
 def test_remove_a_shirt():
-
     service = ShirtService()
-    result = service.delete(2)
 
-    assert result == None
+    assert service.delete(2) is None
 
 
 def test_fail_remove_shirt_not_found():
     service = ShirtService()
-    with pytest.raises(ServiceResourceNotFoundException):
+    with pytest.raises(ServiceResourceDoesNotExistException):
         service.delete(123)
 
 
 def test_update_a_shirt():
-    shirt = {
-        "size": "M",
-        "color": "Yellow",
-        "brand": "ZaraMF",
-        "price": Decimal(130),
-    }
-
     service = ShirtService()
-    result = service.update(1, shirt)
+    result = service.update(
+        id=1,
+        size="M",
+        color="Yellow",
+        brand="ZaraMF",
+        price=Decimal(130),
+    )
 
-    assert shirt["size"] == result.size
-    assert shirt["color"] == result.color
-    assert shirt["brand"] == result.brand
-    assert shirt["price"] == result.price
+    assert result.size == "M"
+    assert result.color == "Yellow"
+    assert result.brand == "ZaraMF"
+    assert result.price == Decimal(130)
 
 
 def test_update_a_shirt_not_found():
-    shirt = {
-        "size": "M",
-        "color": "Yellow",
-        "brand": "ZaraMF",
-        "price": Decimal(130),
-    }
-
     service = ShirtService()
 
-    with pytest.raises(ServiceResourceNotFoundException):
-        service.update(123, shirt)
+    with pytest.raises(ServiceResourceDoesNotExistException):
+        service.update(
+            id=123,
+            size="M",
+            color="Yellow",
+            brand="ZaraMF",
+            price=Decimal(130),
+        )
 
 
 def test_partially_update_a_shirt():
     service = ShirtService()
     original = service.get(pk=1)
     shirt = {
+        "id": 1,
         "color": "Yellow",
         "brand": "ZaraMF",
     }
 
-    result = service.update(1, shirt)
+    result = service.update(
+        id=1,
+        color="Yellow",
+        brand="ZaraMF",
+    )
 
     assert original.size == result.size
     assert original.price == result.price
 
-    assert shirt["color"] == result.color
-    assert shirt["brand"] == result.brand
+    assert result.color == "Yellow"
+    assert result.brand == "ZaraMF"

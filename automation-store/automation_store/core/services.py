@@ -1,7 +1,7 @@
 from decimal import Decimal
 
-from .domain import Shirt
-from .exceptions import ServiceResourceNotFoundException
+from automation_store.core.domain import Shirt
+from automation_store.core.exceptions import ServiceResourceDoesNotExistException
 
 
 class ShirtService:
@@ -10,20 +10,20 @@ class ShirtService:
             Shirt("M", "Black", "Nike", Decimal(100), 1),
             Shirt("GG", "Pink", "Nike", Decimal(120), 2),
         ]
-    
+
     def list(self):
         return self.list_of_shirt
 
     def get(self, pk):
-        shirt = list(filter(lambda shirt: shirt.id == int(pk), self.list_of_shirt))
+        shirt = [shirt for shirt in self.list_of_shirt if int(shirt.id) == int(pk)]
 
         if not shirt:
-            raise ServiceResourceNotFoundException("Shirt")
+            raise ServiceResourceDoesNotExistException("Shirt")
 
         return shirt[0]
 
     def create(self, item: Shirt):
-        item.id=len(self.list_of_shirt)
+        item.id = len(self.list_of_shirt) + 1
         self.list_of_shirt.append(item)
 
         return item
@@ -33,13 +33,11 @@ class ShirtService:
 
         self.list_of_shirt.remove(shirt)
 
-    def update(self, id, data: dict):
-        shirt = self.get(id)
-        
-        shirt.size = data.get("size", shirt.size)
-        shirt.color = data.get("color", shirt.color)
-        shirt.brand = data.get("brand", shirt.brand)
-        shirt.price = data.get("price", shirt.price)
+    def update(self, **data):
+        shirt = self.get(data.get("id"))
+
+        for k, v in data.items():
+            setattr(shirt, k, v)
 
         return shirt
 

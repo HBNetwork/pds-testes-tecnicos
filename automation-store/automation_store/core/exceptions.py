@@ -1,6 +1,6 @@
 
-class ServiceResourceNotFoundException(Exception):
-    """Raised when the input value is too small"""
+class ServiceResourceDoesNotExistException(Exception):
+    """Raised when a resource does not exist."""
 
     def __init__(self, resource_name) -> None:
         self.message = f"{resource_name} not found."
