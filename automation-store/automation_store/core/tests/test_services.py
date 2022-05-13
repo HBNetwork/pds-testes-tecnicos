@@ -8,23 +8,20 @@ from automation_store.core.services import ShirtService
 
 
 def test_list_all_shirt():
-    service = ShirtService()
-    shirts = service.list()
+    shirts = ShirtService().list()
 
     assert len(shirts) == 2
 
 
 def test_get_shirt_by_id():
-    service = ShirtService()
-    shirt = service.get(pk=1)
+    shirt = ShirtService().get(pk=1)
 
     assert shirt != None
 
 
 def test_fail_get_shirt_not_found():
-    service = ShirtService()
     with pytest.raises(ServiceResourceDoesNotExistException):
-        service.get(pk=123)
+        ShirtService().get(pk=123)
 
 
 def test_create_a_shirt():
@@ -35,27 +32,22 @@ def test_create_a_shirt():
         price=Decimal(50),
     )
 
-    service = ShirtService()
-    result = service.create(shirt)
+    result = ShirtService().create(shirt)
 
     assert result == shirt
 
 
 def test_remove_a_shirt():
-    service = ShirtService()
-
-    assert service.delete(2) is None
+    assert ShirtService().delete(2) is None
 
 
 def test_fail_remove_shirt_not_found():
-    service = ShirtService()
     with pytest.raises(ServiceResourceDoesNotExistException):
-        service.delete(123)
+        ShirtService().delete(123)
 
 
 def test_update_a_shirt():
-    service = ShirtService()
-    result = service.update(
+    result = ShirtService().update(
         id=1,
         size="M",
         color="Yellow",
@@ -70,10 +62,8 @@ def test_update_a_shirt():
 
 
 def test_update_a_shirt_not_found():
-    service = ShirtService()
-
     with pytest.raises(ServiceResourceDoesNotExistException):
-        service.update(
+        ShirtService().update(
             id=123,
             size="M",
             color="Yellow",
@@ -85,11 +75,6 @@ def test_update_a_shirt_not_found():
 def test_partially_update_a_shirt():
     service = ShirtService()
     original = service.get(pk=1)
-    shirt = {
-        "id": 1,
-        "color": "Yellow",
-        "brand": "ZaraMF",
-    }
 
     result = service.update(
         id=1,
