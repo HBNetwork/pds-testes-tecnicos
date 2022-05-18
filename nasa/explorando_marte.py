@@ -5,6 +5,20 @@ class EndTerrainException(Exception):
     pass
 
 
+class Coordinate(object):
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __repr__(self):
+        return '{} {}'.format(self.x, self.y)
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+    def __add__(self, other):
+        return Coordinate(self.x + other.x, self.y + other.y)
+
 class Sonda():
 
     TURN_DIRECTIONS = {
@@ -15,42 +29,41 @@ class Sonda():
     }
 
     MOVE_FORWARD_COORDINATES = {
-        'N': {'x':  0, 'y':  1},
-        'S': {'x':  0, 'y': -1},
-        'E': {'x':  1, 'y':  0},
-        'W': {'x': -1, 'y':  0}
+        'N': Coordinate(0,  1),
+        'S': Coordinate(0, -1),
+        'E': Coordinate(1,  0),
+        'W': Coordinate(-1, 0)
     }
 
-    def __init__(self, terrain_limit, start_coordinate, direction):
+    def __init__(self, terrain_limit, initial_coordinate, direction):
         self._terrain_limit_x, self._terrain_limit_y = terrain_limit
-        self._x, self._y = start_coordinate
+        self._coordinate = Coordinate(*initial_coordinate)
         self.direction = direction
 
     @property
     def x(self):
-        return self._x
-
-    @x.setter
-    def x(self, value):
-        if value < 0 or value > self._terrain_limit_x:
-            raise EndTerrainException(
-                f'X value must be between 0 and {self._terrain_limit_x}')
-        self._x = value
+        return self.coordinate.x
 
     @property
     def y(self):
-        return self._y
+        return self.coordinate.y
 
-    @y.setter
-    def y(self, value):
-        if value < 0 or value > self._terrain_limit_y:
+    @property
+    def coordinate(self):
+        return self._coordinate
+
+    @coordinate.setter
+    def coordinate(self, new_coordinate):
+        if new_coordinate.x < 0 or new_coordinate.x > self._terrain_limit_x:
+            raise EndTerrainException(
+                f'X value must be between 0 and {self._terrain_limit_x}')
+        if new_coordinate.y < 0 or new_coordinate.y > self._terrain_limit_y:
             raise EndTerrainException(
                 f'Y value must be between 0 and {self._terrain_limit_y}')
-        self._y = value
+        self._coordinate = new_coordinate
 
     def move_forward(self):
-        self.x += self.MOVE_FORWARD_COORDINATES[self.direction]['x']
-        self.y += self.MOVE_FORWARD_COORDINATES[self.direction]['y']
+        self.coordinate += self.MOVE_FORWARD_COORDINATES[self.direction]
 
     def turn_left(self):
         self.direction = self.TURN_DIRECTIONS[self.direction]['L']
@@ -96,6 +109,17 @@ class Controller():
             self.move(movement)
 
 
+#=== Tests Coordinate ===
+
+def test_sum():
+    c1 = Coordinate(1, 2)
+    c2 = Coordinate(3, 4)
+    assert (c1 + c2) == Coordinate(4, 6)
+
+def test_equality():
+    assert Coordinate(1, 2) == Coordinate(1, 2)
+    assert not Coordinate(1, 2) == Coordinate(2, 2)
+
 #==== Tests Sonda ======
 
 def test_move_forward_from_north():
@@ -107,7 +131,13 @@ def test_move_forward_from_north():
 def test_raise_exception_when_try_move_out_terrain_width():
     sonda = Sonda((5, 5), (1, 2), 'N')
     with pytest.raises(EndTerrainException):
-        sonda.x = 6
+        sonda.coordinate = Coordinate(6, 2)
+
+
+def test_raise_exception_when_try_move_out_terrain_height():
+    sonda = Sonda((5, 5), (1, 2), 'N')
+    with pytest.raises(EndTerrainException):
+        sonda.coordinate = Coordinate(2, 6)
 
 
 def test_move_forward_from_east():
