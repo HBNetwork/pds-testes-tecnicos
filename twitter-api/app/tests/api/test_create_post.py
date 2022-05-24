@@ -1,6 +1,6 @@
 import pytest
 from core.models import Post
-from core.validators import MaximumLimitPostsForToday
+from core.services import MaximumLimitPostsForToday
 from django.urls import reverse
 from model_bakery import baker
 
@@ -59,4 +59,7 @@ def test_cannot_post(client_authenticated, faker, user):
     )
 
     assert resp.status_code == 400
-    assert resp.json()["message"] == str(MaximumLimitPostsForToday())
+    assert (
+        resp.json()["message"]
+        == "You have reached the maximum number for creating posts today."
+    )
