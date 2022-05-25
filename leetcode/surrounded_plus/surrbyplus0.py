@@ -7,25 +7,10 @@ Function should return false if any alpha character present in the string isn't
 
 
 def symbols(input_str: str) -> bool:
-    plus = False
-    foundalpha = False
-    validInput = True
-    for i, l in enumerate(input_str):
-        if l == "+":
-            if plus and foundalpha:
-                foundalpha = False
-                validInput = True
-            plus = True
-        elif l.isalpha():
-            validInput = False
-            foundalpha = True
-        elif l != "+" and foundalpha:
-            return False
-
-    return validInput
+    """Fill your code bellow to make all tests pass."""
 
 
-def main():
+def test_main():
     assert symbols("") is True
     assert symbols("0") is True
     assert symbols("123") is True
@@ -39,7 +24,6 @@ def main():
     assert symbols("+a+b+7") is True
     assert symbols("+a+=5=+d+") is True
     assert symbols("12+ab+a+12") is True
-
     assert symbols("a") is False
     assert symbols("a+") is False
     assert symbols("+a") is False
@@ -52,8 +36,7 @@ def main():
     assert symbols("+ab+a") is False
     assert symbols("+a+b=") is False
 
-    print("Success!")
-
 
 if __name__ == "__main__":
-    main()
+    import pytest
+    pytest.main(["-s", __file__])

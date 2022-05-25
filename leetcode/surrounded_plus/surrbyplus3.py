@@ -1,4 +1,3 @@
-import pytest
 """
 Write a function that determines if all alpha input_str[idx]acters in a string are surrounded 
 (the input_str[idx]acters immediately before and after) by a plus sign.
@@ -8,6 +7,7 @@ surrounded by a plus sign. Otherwise the function should return true.
 
 
 def symbols(input_str: str) -> bool:
+    """Working version 3 submitted by student."""
     idx = 0
 
     while idx < len(input_str):
@@ -46,8 +46,8 @@ def test_main():
     assert symbols("0") is True
     assert symbols("123") is True
     assert symbols("01%2-@") is True
-    assert symbols("+a+") is True
     assert symbols("+1+") is True
+    assert symbols("+a+") is True
     assert symbols("+ab+") is True
     assert symbols("+ab++") is True
     assert symbols("+Z+Y+") is True
@@ -55,7 +55,6 @@ def test_main():
     assert symbols("+a+b+7") is True
     assert symbols("+a+=5=+d+") is True
     assert symbols("12+ab+a+12") is True
-
     assert symbols("a") is False
     assert symbols("a+") is False
     assert symbols("+a") is False
@@ -70,4 +69,5 @@ def test_main():
 
 
 if __name__ == "__main__":
-    pytest.main(["-s"], __file__)
+    import pytest
+    pytest.main(["-s", __file__])
