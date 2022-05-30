@@ -123,7 +123,7 @@ def test_update_shirt_with_id_not_found(api_client):
         "brand": "ZaraMF",
         "price": Decimal(110),
     }
-    data_expected = {"message": "Resource not found."}
+    data_expected = {"detail": "Shirt does not exist."}
 
     url = r("shirt-detail", kwargs={"pk": 10})
     response = api_client.patch(

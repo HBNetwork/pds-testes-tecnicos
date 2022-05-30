@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from automation_store.core.domain import Shirt
-from automation_store.core.exceptions import ServiceResourceDoesNotExistException
+from automation_store.core.exceptions import ServiceShirtDoesNotExistException
 
 
 class ShirtService:
@@ -18,7 +18,7 @@ class ShirtService:
         shirt = [shirt for shirt in self.list_of_shirt if int(shirt.id) == int(pk)]
 
         if not shirt:
-            raise ServiceResourceDoesNotExistException("Shirt")
+            raise ServiceShirtDoesNotExistException()
 
         return shirt[0]
 
@@ -40,6 +40,3 @@ class ShirtService:
             setattr(shirt, k, v)
 
         return shirt
-
-    def __contains__(self, item: Shirt):
-        ...

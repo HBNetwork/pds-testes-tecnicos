@@ -1,6 +1,12 @@
 from automation_store.core.domain import Shirt
-from automation_store.core.exceptions import ServiceResourceDoesNotExistException
-from automation_store.core.serializers import ShirtSerializer
+from automation_store.core.exceptions import (
+    ApiShirtDoesNotExist,
+    ServiceShirtDoesNotExistException,
+)
+from automation_store.core.serializers import (
+    ShirtSerializer,
+    ShirtUpdateSerializer,
+)
 from automation_store.core.services import ShirtService
 from rest_framework import status, viewsets
 from rest_framework.response import Response
@@ -12,9 +18,7 @@ class ShirtViewSet(viewsets.ViewSet):
 
     def create(self, request):
         serializer = ShirtSerializer(data=request.data)
-
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
 
         self.service.create(Shirt(**serializer.data))
 
@@ -29,28 +33,19 @@ class ShirtViewSet(viewsets.ViewSet):
             shirt = self.service.get(pk)
             serializer = ShirtSerializer(shirt)
 
-        except ServiceResourceDoesNotExistException:
-            return Response(
-                {"message": "Resource not found."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+        except ServiceShirtDoesNotExistException:
+            raise ApiShirtDoesNotExist()
 
         return Response(serializer.data, status.HTTP_200_OK)
 
     def partial_update(self, request, pk=None):
-        serializer = ShirtSerializer(data=request.data, partial=True)
-        if not serializer.is_valid():
-            return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        serializer = ShirtUpdateSerializer(data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+
         try:
-            shirt = self.service.update(id=int(pk), **request.data)
-        except ServiceResourceDoesNotExistException:
-            return Response(
-                {"message": "Resource not found."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+            shirt = self.service.update(id=pk, **serializer.data)
+        except ServiceShirtDoesNotExistException:
+            raise ApiShirtDoesNotExist()
 
         serializer = ShirtSerializer(shirt)
         return Response(serializer.data, status.HTTP_200_OK)
@@ -58,10 +53,7 @@ class ShirtViewSet(viewsets.ViewSet):
     def destroy(self, request, pk=None):
         try:
             self.service.delete(pk)
-        except ServiceResourceDoesNotExistException:
-            return Response(
-                {"message": "Resource not found."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+        except ServiceShirtDoesNotExistException:
+            raise ApiShirtDoesNotExist()
 
         return Response("", status.HTTP_200_OK)
