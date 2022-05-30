@@ -1,9 +1,8 @@
 from decimal import Decimal
 
 import pytest
-
 from automation_store.core.domain import Shirt
-from automation_store.core.exceptions import ServiceResourceDoesNotExistException
+from automation_store.core.exceptions import ServiceShirtDoesNotExistException
 from automation_store.core.services import ShirtService
 
 
@@ -20,8 +19,8 @@ def test_get_shirt_by_id():
 
 
 def test_fail_get_shirt_not_found():
-    with pytest.raises(ServiceResourceDoesNotExistException):
-        ShirtService().get(pk=123)
+    with pytest.raises(ServiceShirtDoesNotExistException):
+        ShirtService().get(pk=404)
 
 
 def test_create_a_shirt():
@@ -42,7 +41,7 @@ def test_remove_a_shirt():
 
 
 def test_fail_remove_shirt_not_found():
-    with pytest.raises(ServiceResourceDoesNotExistException):
+    with pytest.raises(ServiceShirtDoesNotExistException):
         ShirtService().delete(123)
 
 
@@ -62,9 +61,9 @@ def test_update_a_shirt():
 
 
 def test_update_a_shirt_not_found():
-    with pytest.raises(ServiceResourceDoesNotExistException):
+    with pytest.raises(ServiceShirtDoesNotExistException):
         ShirtService().update(
-            id=123,
+            id=404,
             size="M",
             color="Yellow",
             brand="ZaraMF",
@@ -77,7 +76,7 @@ def test_partially_update_a_shirt():
     original = service.get(pk=1)
 
     result = service.update(
-        id=1,
+        id=original.id,
         color="Yellow",
         brand="ZaraMF",
     )
