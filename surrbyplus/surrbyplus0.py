@@ -10,7 +10,7 @@ def symbols(input_str: str) -> bool:
     plus = False
     foundalpha = False
     validInput = True
-    for i, l in enumerate(input_str):
+    for l in input_str:
         if l == "+":
             if plus and foundalpha:
                 foundalpha = False
@@ -19,7 +19,7 @@ def symbols(input_str: str) -> bool:
         elif l.isalpha():
             validInput = False
             foundalpha = True
-        elif l != "+" and foundalpha:
+        elif foundalpha:
             return False
 
     return validInput

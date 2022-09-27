@@ -38,11 +38,7 @@ def has_duplicate(nums):
 def has_duplicate(nums):
     nums.sort() #O(nlogn)
 
-    for current, next_ in zip(nums[:-1], nums[1:]):
-        if current == next_:
-            return True
-
-    return False
+    return any(current == next_ for current, next_ in zip(nums[:-1], nums[1:]))
 
 
 def has_duplicate(nums):

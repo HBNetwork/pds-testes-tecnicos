@@ -19,7 +19,7 @@ class Loja:
         """
         self.nome = nome
         self.comi = comi
-        self.pedido = dict()
+        self.pedido = {}
         self.lista_pedido = []
         self.qtdpedido = 0
 

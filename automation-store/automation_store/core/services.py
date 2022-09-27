@@ -15,12 +15,12 @@ class ShirtService:
         return self.list_of_shirt
 
     def get(self, pk):
-        shirt = [shirt for shirt in self.list_of_shirt if int(shirt.id) == int(pk)]
-
-        if not shirt:
+        if shirt := [
+            shirt for shirt in self.list_of_shirt if int(shirt.id) == int(pk)
+        ]:
+            return shirt[0]
+        else:
             raise ServiceResourceDoesNotExistException("Shirt")
-
-        return shirt[0]
 
     def create(self, item: Shirt):
         item.id = len(self.list_of_shirt) + 1

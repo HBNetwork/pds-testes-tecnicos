@@ -59,7 +59,7 @@ def user_not_found(request, exc):
 def user(request, user_id):
     user = User.objects.get(id=user_id)
 
-    data = UserOutSchema(
+    return UserOutSchema(
         id=user.id,
         username=user.username,
         joined_at=user.joined_at,
@@ -68,8 +68,6 @@ def user(request, user_id):
         posts=user.total_posts,
         is_following=UserService().is_following(request.user.id, user_id),
     )
-
-    return data
 
 
 

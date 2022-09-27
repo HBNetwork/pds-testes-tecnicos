@@ -20,7 +20,7 @@ class Motoboy:
         self.taxa = taxa
         self.loja_prioridade = [loja_prioridade]
         self.lojaentrega =[]
-        self.entrega = dict()
+        self.entrega = {}
         self.listaestrega = []
         self.qtdentregas_realizadas = 0
 
@@ -71,11 +71,10 @@ class Motoboy:
         if self.loja_prioridade[0] == 'Atende todas as lojas':
             self.loja_prioridade.remove('Atende todas as lojas')
             self.loja_prioridade.append(loja_prioridade)
+        elif loja_prioridade in self.loja_prioridade:
+            print('Essa loja já está cadastrada')
         else:
-            if loja_prioridade in self.loja_prioridade:
-                print('Essa loja já está cadastrada')
-            else:
-                self.loja.append(loja_prioridade)
+            self.loja.append(loja_prioridade)
 
     def excluir_loja(self, loja_prioridade):
         """

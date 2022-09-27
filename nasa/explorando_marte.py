@@ -11,7 +11,7 @@ class Coordinate(object):
         self.y = y
 
     def __repr__(self):
-        return '{} {}'.format(self.x, self.y)
+        return f'{self.x} {self.y}'
 
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
@@ -118,7 +118,7 @@ def test_sum():
 
 def test_equality():
     assert Coordinate(1, 2) == Coordinate(1, 2)
-    assert not Coordinate(1, 2) == Coordinate(2, 2)
+    assert Coordinate(1, 2) != Coordinate(2, 2)
 
 #==== Tests Sonda ======
 

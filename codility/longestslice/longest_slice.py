@@ -48,7 +48,7 @@ def longest_slice(nums: array) -> int:
     else:
       even = n
       max = 2
-    
+
     if i + 1 < len(nums):
       if nums[i + 1] == odd:
         size += 1
@@ -57,7 +57,7 @@ def longest_slice(nums: array) -> int:
       else:
         odd = nums[i + 1]
         size = 2
-    
+
 
   return longest
 

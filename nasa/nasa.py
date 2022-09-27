@@ -23,17 +23,17 @@ def move_sonda(sonda, moves):
             elif d == 'S':
                 d = 'W'
             elif d == 'W':
-                d = 'N'        
+                d = 'N'
         elif m == 'M':
-            if d == 'N':
-                y +=1
-            if d == 'S':
-                y -= 1
             if d == 'E':
                 x += 1
-            if d == 'W':
+            elif d == 'N':
+                y +=1
+            elif d == 'S':
+                y -= 1
+            elif d == 'W':
                 x -= 1
-    
+
     return f'{x} {y} {d}'
 
 def main():

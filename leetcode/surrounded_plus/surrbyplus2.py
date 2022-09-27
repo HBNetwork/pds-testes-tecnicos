@@ -11,11 +11,7 @@ def symbols(input_str: str) -> bool:
     onValidation = False
 
     if len(input_str) < 3:
-        for l in input_str:
-            if l.isalpha():
-                return False
-        return True
-
+        return not any(l.isalpha() for l in input_str)
     for i, l in enumerate(input_str):
         if onValidation:
             if l.isalpha():
@@ -27,13 +23,10 @@ def symbols(input_str: str) -> bool:
             return False
 
         if l.isalpha():
-            if i == len(input_str) - 1:
+            if i == len(input_str) - 1 or input_str[i - 1] != "+":
                 return False
-            elif input_str[i - 1] == "+":
-                onValidation = True
             else:
-                return False
-
+                onValidation = True
     return True
 
 

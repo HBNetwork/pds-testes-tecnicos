@@ -35,10 +35,7 @@ def symbols(s: str) -> bool:
             else:
                 return False
 
-    if state == TWO:
-        return False
-
-    return True
+    return state != TWO
 
 
 def test_main():

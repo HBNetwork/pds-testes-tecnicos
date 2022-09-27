@@ -48,17 +48,15 @@ class Manage:
         for p in self.pedidos:
             self.criando_pedido(p['loja'], p['valor'])
 
-        l = []
-
-        for m in self.motoboys:
-            l.append({
+        return [
+            {
                 'motoboy': m.nome,
                 'Pedidos': m.quantidade_entregas_ativas(),
                 'De qual loja é': m.vizualizar_loja_entrega(),
                 'Comissão': self.calculando_comissão(m),
-            })
-
-        return l
+            }
+            for m in self.motoboys
+        ]
 
     def criando_pedido(self, loja, valor):
         """
@@ -106,13 +104,11 @@ class Manage:
         id = inteiro
         """
 
-        lista_encontra_motoboy_prioridade = [m for m in self.motoboys
-                                             if loja.retornar_nome() in m.vizualizar_prioridade()]
-
-        if len(lista_encontra_motoboy_prioridade) == 0:
-            return False
-
-        else:
+        if lista_encontra_motoboy_prioridade := [
+            m
+            for m in self.motoboys
+            if loja.retornar_nome() in m.vizualizar_prioridade()
+        ]:
             a = sorted([[lista_encontra_motoboy_prioridade[i],(loja.enviando_pedido(id)[0]*loja.enviando_pedido(id)[2])+ lista_encontra_motoboy_prioridade[0].taxa,
                             lista_encontra_motoboy_prioridade[i].quantidade_entregas_ativas()] for i in
                            range(len(lista_encontra_motoboy_prioridade))], key=lambda x: x[-1])
@@ -120,21 +116,26 @@ class Manage:
 
 
             if len(lista_encontra_motoboy_prioridade) <= 1:
-                b = a[0][0]
+                return a[0][0]
 
-            elif a[0][1] <= sum([x[1] for x in a]) / len(self.lista_encontra_motoboy_prioridade):
-                b = a[0][0]
+            elif a[0][1] <= sum(x[1] for x in a) / len(
+                self.lista_encontra_motoboy_prioridade
+            ):
+                return a[0][0]
 
             elif a[0][1] <= a[1][1]:
-                b = a[0][0]
+                return a[0][0]
 
-            elif a[0][1] > a[1][1] and a[0][2] < sum([x[2] for x in a]) / len(self.lista_encontra_motoboy_prioridade):
-                b = a[0][0]
+            elif a[0][2] < sum(x[2] for x in a) / len(
+                self.lista_encontra_motoboy_prioridade
+            ):
+                return a[0][0]
 
             else:
-                b = a[1][0]
+                return a[1][0]
 
-            return b
+        else:
+            return False
 
     def encontra_motoboy(self,loja, id):
         """
@@ -154,19 +155,17 @@ class Manage:
                     range(len(self.motoboys))], key=lambda x: x[-1])
 
 
-        if a[0][1] <= sum([x[1] for x in a]) / len(self.motoboys):
-            b = a[0][0]
+        if a[0][1] <= sum(x[1] for x in a) / len(self.motoboys):
+            return a[0][0]
 
         elif a[0][1] <= a[1][1]:
-            b = a[0][0]
+            return a[0][0]
 
-        elif a[0][1] > a[1][1] and a[0][2] < sum([x[2] for x in a]) / len(self.motoboys):
-            b = a[0][0]
+        elif a[0][2] < sum(x[2] for x in a) / len(self.motoboys):
+            return a[0][0]
 
         else:
-            b = a[1][0]
-
-        return b
+            return a[1][0]
 
     def calculando_comissão(self, Motoboy):
         """

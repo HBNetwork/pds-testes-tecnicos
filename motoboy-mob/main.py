@@ -5,13 +5,7 @@ import pytest
 
 class Motoboy(namedtuple("Motoboy", "name price exclusive")):
     def can_deliver(self, store):
-        if not self.exclusive:
-            return True
-
-        if self.exclusive == store:
-            return True
-
-        return False
+        return self.exclusive == store if self.exclusive else True
 
 
 Pedido = namedtuple("Pedido", "store amount commission")

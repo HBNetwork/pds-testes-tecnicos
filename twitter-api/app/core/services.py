@@ -48,29 +48,26 @@ class PostService:
 
     def create_post(self, user_id: int, data):
         self.can_post(user_id)
-        post = Post.objects.create(**data, user_id=user_id)
-        return post
+        return Post.objects.create(**data, user_id=user_id)
 
     def create_repost(self, user_id: int, data):
         self.can_post(user_id)
         post = Post.objects.get(id=data.get("post_id"))
-        repost = Post.objects.create(
+        return Post.objects.create(
             user_id=user_id,
             type=Post.Type.REPOST,
             content=post.content,
         )
-        return repost
 
     def create_quote_post(self, user_id: int, data):
         self.can_post(user_id)
         post = Post.objects.get(id=data.get("post_id"))
-        quote_post = Post.objects.create(
+        return Post.objects.create(
             user_id=user_id,
             type=Post.Type.QUOTE,
             content=post.content,
             comment=data.get("comment"),
         )
-        return quote_post
 
     def all_posts(self):
         return Post.objects.all().order_by("-created_at")

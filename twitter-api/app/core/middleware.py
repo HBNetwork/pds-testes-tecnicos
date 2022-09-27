@@ -13,6 +13,4 @@ class AlwaysAuthenticatedMiddleware:
 
         request.user = user
 
-        response = self.get_response(request)
-
-        return response
+        return self.get_response(request)
